@@ -1,0 +1,17 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/rumahfam/rumah-familiku
+    - /bin/cp -R app $DEPLOYPATH
+    - /bin/cp -R components $DEPLOYPATH
+    - /bin/cp -R lib $DEPLOYPATH
+    - /bin/cp -R prisma $DEPLOYPATH
+    - /bin/cp -R public $DEPLOYPATH
+    - /bin/cp -R locales $DEPLOYPATH
+    - /bin/cp package.json $DEPLOYPATH
+    - /bin/cp next.config.mjs $DEPLOYPATH
+    - /bin/cp middleware.ts $DEPLOYPATH
+    - /bin/cp tsconfig.json $DEPLOYPATH
+    - /bin/cp postcss.config.mjs $DEPLOYPATH
+    - /bin/cp components.json $DEPLOYPATH
+    - /bin/cp pnpm-lock.yaml $DEPLOYPATH
