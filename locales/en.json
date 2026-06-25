@@ -1,0 +1,184 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "pricing": "Pricing",
+    "promo": "Promos",
+    "about": "About",
+    "faq": "FAQ",
+    "contactWhatsapp": "Contact via WhatsApp"
+  },
+  "hero": {
+    "title": "Comfortable, Safe & Sharia-Compliant Stay",
+    "subtitle": "Hotel, Boarding House, Apartment & Villa in Jakarta and Surabaya",
+    "ctaPrimary": "View Properties",
+    "ctaSecondary": "Contact Us on WhatsApp"
+  },
+  "propertyTypes": {
+    "title": "Browse by Property Type",
+    "hotel": "Hotel",
+    "kos": "Boarding House",
+    "apartemen": "Apartment",
+    "rumah": "House / Villa"
+  },
+  "featuredProperties": {
+    "title": "Our Properties",
+    "from": "From",
+    "perNight": "/ night",
+    "capacity": "max {count} people",
+    "viewDetails": "View Details"
+  },
+  "whyUs": {
+    "title": "Why Us?",
+    "shariah": {
+      "title": "Sharia Concept",
+      "desc": "Safe and aligned with Islamic values"
+    },
+    "familyOnly": {
+      "title": "Family Only",
+      "desc": "For families, relatives, or same-gender groups only"
+    },
+    "strategic": {
+      "title": "Strategic Location",
+      "desc": "Close to city center, malls, and public transport"
+    },
+    "easyBooking": {
+      "title": "Easy Booking",
+      "desc": "Direct WhatsApp chat, no hassle"
+    }
+  },
+  "reviews": {
+    "title": "What Our Guests Say",
+    "reviewCount": "{count} reviews"
+  },
+  "faqPreview": {
+    "title": "Frequently Asked Questions",
+    "seeAll": "See All FAQs"
+  },
+  "propertyDetail": {
+    "capacity": "Capacity",
+    "people": "{count} people",
+    "extraCharge": "Extra Charge",
+    "perPerson": "/person",
+    "weekday": "Weekday Price",
+    "weekend": "Weekend Price",
+    "perNight": "/ night",
+    "bookWhatsapp": "Book via WhatsApp",
+    "shareProperty": "Share Property",
+    "description": "Description",
+    "highlights": "Key Highlights",
+    "rules": "House Rules",
+    "location": "Location",
+    "share": "Share",
+    "shareVia": "Share to",
+    "shareWhatsapp": "WhatsApp",
+    "copyLink": "Copy Link",
+    "instagram": "Instagram",
+    "like": "Like",
+    "comment": "Comment"
+  },
+  "pricing": {
+    "title": "Pricing List",
+    "weekday": "Weekday",
+    "weekend": "Weekend",
+    "capacity": "Capacity",
+    "monthlyWni": "Monthly (Indonesian)",
+    "monthlyWna": "Monthly (Foreign)",
+    "excludes": "Excludes",
+    "includes": "Includes",
+    "extraCharge": "Extra Charge",
+    "deposit": "Deposit",
+    "perPerson": "/ orang",
+    "bookNow": "Book Now"
+  },
+  "promo": {
+    "title": "Promotions",
+    "active": "ACTIVE",
+    "expired": "EXPIRED",
+    "validUntil": "Valid until",
+    "claimNow": "Claim Now",
+    "noPromo": "No active promos right now",
+    "claimVia": "Claim via WhatsApp"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "Rumah Familiku Syariah was founded to offer comfortable, safe, and Islamic-compliant accommodations for families, groups, and guests who value privacy and comfort. From hotels to villas, we offer a variety of properties across Jakarta and Surabaya.",
+    "mission": "Our Mission",
+    "values": "Our Values"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "general": "General",
+    "booking": "Booking",
+    "rules": "Rules",
+    "payment": "Payment",
+    "q1": "Can I book last minute?",
+    "a1": "Yes, you can book last minute! Contact us via WhatsApp to check current availability.",
+    "q2": "How much is the deposit?",
+    "a2": "The deposit amount varies depending on the property type and duration of stay. Please contact us for more details.",
+    "q3": "Are pets allowed?",
+    "a3": "For now, pets are not allowed in any of our properties.",
+    "q4": "How do I book?",
+    "a4": "The easiest way is to contact us directly via WhatsApp. Our team is ready to help you 24/7.",
+    "q5": "Are there specific house rules?",
+    "a5": "Each property has different rules. Please check the property detail page to see the specific rules.",
+    "q6": "Are you available for foreign guests?",
+    "a6": "Yes, we welcome foreign guests with different pricing. Please contact us for more information."
+  },
+  "admin": {
+    "title": "Rumah Familiku Admin",
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "managePrices": "Manage Prices",
+    "managePromos": "Manage Promos",
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "validUntil": "Valid Until",
+    "imageUrl": "Image URL",
+    "active": "Active",
+    "error": "An error occurred",
+    "success": "Successfully saved"
+  },
+  "footer": {
+    "tagline": "Sharia-Compliant Accommodation for Happy Families",
+    "contact": "Contact Us",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "follow": "Follow Us",
+    "copyright": "© 2024 Rumah Familiku Syariah. All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "back": "Back",
+    "next": "Next",
+    "prev": "Previous",
+    "selectLanguage": "Language"
+  }, 
+  "availability": {
+    "title": "Check Availability",
+    "selectRoom": "Select Room",
+    "available": "Available",
+    "booked": "Booked",
+    "disclaimer": "Calendar is for estimation only, please contact us via WhatsApp for final confirmation.",
+    "addBooking": "Add Booking",
+    "deleteBooking": "Delete",
+    "rangeMode": "Select Range",
+    "manualMode": "Manual Select"
+  }
+}
+

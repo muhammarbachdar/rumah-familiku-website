@@ -1,0 +1,399 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: 'Playfair Display', serif;
+  --font-sans: var(--font-geist-sans), 'Inter', 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+  --color-brand-green: #1B5E20;
+  --color-green-hover: #2E7D32;
+  --color-cream: #F5F0E8;
+  --color-gold: #C9A84C;
+  --color-charcoal: #212121;
+  --color-gray-text: #757575;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Rumah Familiku Color System */
+  --background: #FFFFFF;
+  --foreground: #212121;
+  --charcoal: #212121;
+  --gray-text: #757575;
+  --brand-green: #1B5E20;
+  --green-hover: #2E7D32;
+  --cream: #F5F0E8;
+  --gold: #C9A84C;
+  
+  --card: #FFFFFF;
+  --card-foreground: #212121;
+  --popover: #FFFFFF;
+  --popover-foreground: #212121;
+  --primary: #1B5E20;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F0E8;
+  --secondary-foreground: #212121;
+  --muted: #F5F0E8;
+  --muted-foreground: #757575;
+  --accent: #C9A84C;
+  --accent-foreground: #212121;
+  --destructive: #DC2626;
+  --border: #E5E7EB;
+  --input: #F3F4F6;
+  --ring: #1B5E20;
+  --chart-1: #1B5E20;
+  --chart-2: #2E7D32;
+  --chart-3: #C9A84C;
+  --chart-4: #F5F0E8;
+  --chart-5: #757575;
+  --radius: 1rem;
+  --sidebar: #1B5E20;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #2E7D32;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #C9A84C;
+  --sidebar-accent-foreground: #212121;
+  --sidebar-border: #2E7D32;
+  --sidebar-ring: #C9A84C;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+
+  /* Premium animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      text-shadow: 0 0 10px rgba(27, 94, 32, 0.3);
+    }
+    50% {
+      text-shadow: 0 0 20px rgba(27, 94, 32, 0.5);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes borderGlow {
+    0%, 100% {
+      border-color: rgba(27, 94, 32, 0.3);
+      box-shadow: 0 0 0 0 rgba(27, 94, 32, 0.1);
+    }
+    50% {
+      border-color: rgba(201, 168, 76, 0.6);
+      box-shadow: 0 0 15px rgba(27, 94, 32, 0.2);
+    }
+  }
+
+  /* Utility classes */
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-fadeInScale {
+    animation: fadeInScale 0.5s ease-out;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+
+  .animate-slideInRight {
+    animation: slideInRight 0.6s ease-out;
+  }
+
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-borderGlow {
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+
+  .shimmer-loading {
+    background: linear-gradient(
+      90deg,
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Premium transitions */
+  .transition-smooth {
+    transition: all 300ms ease-out;
+  }
+
+  .transition-premium {
+    transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Glass effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Premium hover scale */
+  .hover-lift {
+    transition: all 300ms ease-out;
+  }
+  .hover-lift:hover {
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    transform: scale(1.05);
+  }
+
+  /* Refined card hover */
+  .card-hover {
+    transition: all 300ms ease-out;
+  }
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+  }
+
+  /* Button glow effect */
+  .btn-glow {
+    position: relative;
+    overflow: hidden;
+    transition: all 500ms ease;
+  }
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.5s ease;
+  }
+
+  .btn-glow:hover::before {
+    left: 100%;
+  }
+
+  /* Link hover underline animation */
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+}
+
+/* ===== CSS Variables Override untuk dinamis ===== */
+/* Kelas utilitas yang menggunakan variabel CSS, dapat diubah oleh appearance.json */
+.bg-brand-green {
+  background-color: var(--brand-green);
+}
+.hover\:bg-brand-green:hover {
+  background-color: var(--brand-green);
+}
+.text-brand-green {
+  color: var(--brand-green);
+}
+.border-brand-green {
+  border-color: var(--brand-green);
+}
+.ring-brand-green {
+  --tw-ring-color: var(--brand-green);
+}
+.bg-gold {
+  background-color: var(--gold);
+}
+.text-gold {
+  color: var(--gold);
+}
+.border-gold {
+  border-color: var(--gold);
+}
+.hover\:bg-gold:hover {
+  background-color: var(--gold);
+}
+.hover\:text-gold:hover {
+  color: var(--gold);
+}
+.bg-green-hover {
+  background-color: var(--green-hover);
+}
+.hover\:bg-green-hover:hover {
+  background-color: var(--green-hover);
+}
+.bg-cream {
+  background-color: var(--cream);
+}
+.text-charcoal {
+  color: var(--charcoal);
+}
+.text-gray-text {
+  color: var(--gray-text);
+}
+.bg-background {
+  background-color: var(--background);
+}
+/* Warna solid tetap (tidak dinamis) untuk elemen admin */
+.bg-white,
+.bg-white\/50 {
+  background-color: #ffffff;
+}

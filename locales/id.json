@@ -1,0 +1,183 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "properties": "Properti",
+    "pricing": "Harga",
+    "promo": "Promo",
+    "about": "Tentang",
+    "faq": "FAQ",
+    "contactWhatsapp": "Hubungi via WhatsApp"
+  },
+  "hero": {
+    "title": "Hunian Nyaman, Aman & Syariah",
+    "subtitle": "Hotel, Kos, Apartemen & Villa di Jakarta dan Surabaya",
+    "ctaPrimary": "Lihat Properti",
+    "ctaSecondary": "Hubungi Kami via WhatsApp"
+  },
+  "propertyTypes": {
+    "title": "Jelajahi Berdasarkan Tipe",
+    "hotel": "Hotel",
+    "kos": "Kos",
+    "apartemen": "Apartemen",
+    "rumah": "Rumah / Villa"
+  },
+  "featuredProperties": {
+    "title": "Properti Kami",
+    "from": "Mulai dari",
+    "perNight": "/ malam",
+    "capacity": "max {count} orang",
+    "viewDetails": "Lihat Detail"
+  },
+  "whyUs": {
+    "title": "Mengapa Kami?",
+    "shariah": {
+      "title": "Konsep Syariah",
+      "desc": "Aman dan sesuai nilai Islam"
+    },
+    "familyOnly": {
+      "title": "Khusus Keluarga",
+      "desc": "Hanya untuk keluarga, saudara, atau teman 1 gender"
+    },
+    "strategic": {
+      "title": "Lokasi Strategis",
+      "desc": "Dekat pusat kota, mall, dan transportasi umum"
+    },
+    "easyBooking": {
+      "title": "Booking Mudah",
+      "desc": "Langsung chat WhatsApp, tanpa ribet"
+    }
+  },
+  "reviews": {
+    "title": "Kata Tamu Kami",
+    "reviewCount": "{count} ulasan"
+  },
+  "faqPreview": {
+    "title": "Pertanyaan Umum",
+    "seeAll": "Lihat Semua FAQ"
+  },
+  "propertyDetail": {
+    "capacity": "Kapasitas",
+    "people": "{count} orang",
+    "extraCharge": "Tambahan",
+    "perPerson": "/orang",
+    "weekday": "Harga Weekday",
+    "weekend": "Harga Weekend",
+    "perNight": "/ malam",
+    "bookWhatsapp": "Pesan via WhatsApp",
+    "shareProperty": "Bagikan Properti",
+    "description": "Deskripsi",
+    "highlights": "Fasilitas Unggulan",
+    "rules": "Peraturan",
+    "location": "Lokasi",
+    "share": "Bagikan",
+    "shareVia": "Bagikan ke",
+    "shareWhatsapp": "WhatsApp",
+    "copyLink": "Salin Tautan",
+    "instagram": "Instagram",
+    "like": "Suka",
+    "comment": "Komentar"
+  },
+  "pricing": {
+    "title": "Daftar Harga",
+    "weekday": "Weekday",
+    "weekend": "Weekend",
+    "capacity": "Kapasitas",
+    "monthlyWni": "Bulanan (WNI)",
+    "monthlyWna": "Bulanan (WNA)",
+    "excludes": "Tidak termasuk",
+    "includes": "Termasuk",
+    "extraCharge": "Biaya Tambahan",
+    "deposit": "DP/Deposit",
+    "perPerson": "/ orang",
+    "bookNow": "Pesan Sekarang"
+  },
+  "promo": {
+    "title": "Promosi",
+    "active": "AKTIF",
+    "expired": "BERAKHIR",
+    "validUntil": "Berlaku hingga",
+    "claimNow": "Klaim Promo",
+    "noPromo": "Belum ada promo saat ini",
+    "claimVia": "Klaim Promo via WhatsApp"
+  },
+  "about": {
+    "title": "Tentang Kami",
+    "description": "Rumah Familiku Syariah hadir untuk memberikan hunian yang nyaman, aman, dan sesuai nilai Islam bagi keluarga, rombongan, dan tamu yang menghargai privasi serta kenyamanan. Dari hotel hingga villa, kami menyediakan berbagai pilihan properti di Jakarta dan Surabaya.",
+    "mission": "Misi Kami",
+    "values": "Nilai-Nilai Kami"
+  },
+  "faq": {
+    "title": "Pertanyaan yang Sering Diajukan",
+    "general": "Umum",
+    "booking": "Booking",
+    "rules": "Peraturan",
+    "payment": "Pembayaran",
+    "q1": "Apakah bisa booking dadakan?",
+    "a1": "Ya, Anda bisa booking dadakan. Hubungi kami via WhatsApp untuk mengetahui ketersediaan terbaru.",
+    "q2": "Berapa deposit yang diperlukan?",
+    "a2": "Deposit bervariasi tergantung tipe dan durasi menginap. Untuk informasi lebih detail, silakan hubungi kami.",
+    "q3": "Apakah boleh membawa hewan peliharaan?",
+    "a3": "Untuk saat ini, hewan peliharaan tidak diizinkan di semua properti kami.",
+    "q4": "Bagaimana cara booking?",
+    "a4": "Cara paling mudah adalah dengan menghubungi kami langsung via WhatsApp. Tim kami siap membantu Anda 24/7.",
+    "q5": "Apakah ada peraturan khusus?",
+    "a5": "Setiap properti memiliki peraturan yang berbeda. Silakan lihat halaman detail properti untuk mengetahui peraturannya.",
+    "q6": "Apakah tersedia untuk tamu asing (WNA)?",
+    "a6": "Ya, kami melayani tamu asing dengan harga yang berbeda. Silakan hubungi kami untuk informasi lebih lanjut."
+  },
+  "admin": {
+    "title": "Admin Rumah Familiku",
+    "login": "Masuk",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Masuk",
+    "logout": "Keluar",
+    "dashboard": "Dashboard",
+    "managePrices": "Kelola Harga",
+    "managePromos": "Kelola Promo",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "add": "Tambah",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "confirm": "Konfirmasi",
+    "fieldTitle": "Judul",
+    "fieldDescription": "Deskripsi",
+    "validUntil": "Berlaku Hingga",
+    "imageUrl": "URL Gambar",
+    "active": "Aktif",
+    "error": "Terjadi kesalahan",
+    "success": "Berhasil disimpan"
+  },
+  "footer": {
+    "tagline": "Hunian Syariah untuk Keluarga Bahagia",
+    "contact": "Hubungi Kami",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "follow": "Ikuti Kami",
+    "copyright": "© 2024 Rumah Familiku Syariah. Semua hak dilindungi."
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "tryAgain": "Coba Lagi",
+    "close": "Tutup",
+    "search": "Cari",
+    "filter": "Filter",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "prev": "Sebelumnya",
+    "selectLanguage": "Bahasa"
+  },
+  "availability": {
+    "title": "Cek Ketersediaan",
+    "selectRoom": "Pilih Kamar",
+    "available": "Tersedia",
+    "booked": "Terisi",
+    "disclaimer": "Kalender hanya untuk perkiraan, silakan hubungi kami via WhatsApp untuk konfirmasi final.",
+    "addBooking": "Tambah Booking",
+    "deleteBooking": "Hapus",
+    "rangeMode": "Pilih Rentang",
+    "manualMode": "Pilih Manual"
+  }
+}
