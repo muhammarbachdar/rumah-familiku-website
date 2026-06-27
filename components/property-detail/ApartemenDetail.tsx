@@ -28,6 +28,7 @@ export function ApartemenDetail({ property, availabilityData, availabilityLoadin
   const [activeTab, setActiveTab] = useState<Tab>('ringkasan');
   const [showShare, setShowShare] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [showAvailability, setShowAvailability] = useState(false);
 
   const displayName = locale === 'id' ? property.nameId : property.nameEn;
@@ -99,9 +100,101 @@ export function ApartemenDetail({ property, availabilityData, availabilityLoadin
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {allPhotos.map((photo, idx) => (
-                  <img key={idx} src={photo.url} alt={`${displayName} ${idx + 1}`} className="w-full h-40 object-cover rounded-lg" />
+                  <button
+                    key={idx}
+                    onClick={() => setLightboxIndex(idx)}
+                    className="block"
+                  >
+                    <img src={photo.url} alt={`${displayName} ${idx + 1}`} className="w-full h-40 object-cover rounded-lg hover:opacity-80 transition" />
+                  </button>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {lightboxIndex !== null && (
+          <div
+            className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center"
+            onClick={() => setLightboxIndex(null)}
+          >
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ✕
+            </button>
+
+            {lightboxIndex > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+                className="absolute left-2 md:left-6 text-white text-3xl hover:text-gray-300 z-10 bg-black/30 rounded-full w-10 h-10 flex items-center justify-center"
+              >
+                ‹
+              </button>
+            )}
+
+            <img
+              src={allPhotos[lightboxIndex].url}
+              alt={`${displayName} ${lightboxIndex + 1}`}
+              className="max-w-[90vw] max-h-[85vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {lightboxIndex < allPhotos.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
+                className="absolute right-2 md:right-6 text-white text-3xl hover:text-gray-300 z-10 bg-black/30 rounded-full w-10 h-10 flex items-center justify-center"
+              >
+                ›
+              </button>
+            )}
+
+            <div className="absolute bottom-4 text-white text-sm bg-black/30 px-3 py-1 rounded-full">
+              {lightboxIndex + 1} / {allPhotos.length}
+            </div>
+          </div>
+        )}
+
+        {lightboxIndex !== null && (
+          <div
+            className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center"
+            onClick={() => setLightboxIndex(null)}
+          >
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ✕
+            </button>
+
+            {lightboxIndex > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+                className="absolute left-2 md:left-6 text-white text-3xl hover:text-gray-300 z-10 bg-black/30 rounded-full w-10 h-10 flex items-center justify-center"
+              >
+                ‹
+              </button>
+            )}
+
+            <img
+              src={allPhotos[lightboxIndex].url}
+              alt={`${displayName} ${lightboxIndex + 1}`}
+              className="max-w-[90vw] max-h-[85vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {lightboxIndex < allPhotos.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
+                className="absolute right-2 md:right-6 text-white text-3xl hover:text-gray-300 z-10 bg-black/30 rounded-full w-10 h-10 flex items-center justify-center"
+              >
+                ›
+              </button>
+            )}
+
+            <div className="absolute bottom-4 text-white text-sm bg-black/30 px-3 py-1 rounded-full">
+              {lightboxIndex + 1} / {allPhotos.length}
             </div>
           </div>
         )}

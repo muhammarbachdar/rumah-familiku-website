@@ -130,7 +130,8 @@ export default function AdminDashboard() {
             <h1 className="text-2xl md:text-3xl font-bold text-charcoal">Admin Dashboard</h1>
           </div>
 
-          {activeTab === 'overview' && (
+          {/* ===== OVERVIEW ===== */}
+          <div style={{ display: activeTab === 'overview' ? 'block' : 'none' }}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg shadow p-6">
                 <p className="text-gray-text text-sm mb-2">Total Properties</p>
@@ -151,17 +152,36 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
-          )}
+          </div>
 
-          {activeTab === 'prices' && <ManagePricesSection />}
-          {activeTab === 'promos' && <ManagePromosSection />}
-          {activeTab === 'properties' && <ManagePropertiesSection />}
-          {activeTab === 'faq' && <ManageFAQSection />}
-          {activeTab === 'about' && <ManageAboutSection />}
-          {activeTab === 'appearance' && <ManageAppearanceSection />}
-          {activeTab === 'site' && <ManageSiteSection />}
-          {activeTab === 'home' && <ManageHomeSection />}
-          {activeTab === 'availability' && <ManageAvailabilitySection />}
+          {/* ===== SEMUA SECTION DI-RENDER TAPI DISEMBUNYIKAN ===== */}
+          <div style={{ display: activeTab === 'prices' ? 'block' : 'none' }}>
+            <ManagePricesSection />
+          </div>
+          <div style={{ display: activeTab === 'promos' ? 'block' : 'none' }}>
+            <ManagePromosSection />
+          </div>
+          <div style={{ display: activeTab === 'properties' ? 'block' : 'none' }}>
+            <ManagePropertiesSection />
+          </div>
+          <div style={{ display: activeTab === 'faq' ? 'block' : 'none' }}>
+            <ManageFAQSection />
+          </div>
+          <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
+            <ManageAboutSection />
+          </div>
+          <div style={{ display: activeTab === 'appearance' ? 'block' : 'none' }}>
+            <ManageAppearanceSection />
+          </div>
+          <div style={{ display: activeTab === 'site' ? 'block' : 'none' }}>
+            <ManageSiteSection />
+          </div>
+          <div style={{ display: activeTab === 'home' ? 'block' : 'none' }}>
+            <ManageHomeSection />
+          </div>
+          <div style={{ display: activeTab === 'availability' ? 'block' : 'none' }}>
+            <ManageAvailabilitySection />
+          </div>
         </div>
       </div>
     </div>

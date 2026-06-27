@@ -214,28 +214,34 @@ export default function ManagePropertiesSection() {
 
   // ==================== Hapus Properti ====================
   const handleDelete = async (id: string, name: string) => {
-  if (confirm(`Hapus properti "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
-    try {
-      const res = await fetch('/api/admin/data?type=properties', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteProperty', id }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Gagal menghapus properti');
-      }
-
-      // Hapus dari state lokal setelah berhasil
+    if (confirm(`Hapus properti "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      // ===== SIMPAN STATE SEBELUMNYA UNTUK ROLLBACK =====
+      const previousProperties = [...properties];
+      
+      // ===== OPTIMISTIC UPDATE =====
       setProperties(prev => prev.filter(p => p.id !== id));
-      toast.success('Properti berhasil dihapus!');
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal menghapus properti. Silakan coba lagi.');
-      console.error('Delete failed:', error);
+      
+      try {
+        const res = await fetch('/api/admin/data?type=properties', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'deleteProperty', id }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Gagal menghapus properti');
+        }
+
+        toast.success('Properti berhasil dihapus!');
+      } catch (error: any) {
+        // ===== ROLLBACK JIKA GAGAL =====
+        setProperties(previousProperties);
+        toast.error(error.message || 'Gagal menghapus properti. Silakan coba lagi.');
+        console.error('Delete failed:', error);
+      }
     }
-  }
-};
+  };
 
   // ==================== Unit Management (Kos) ====================
   const handleAddUnit = async () => {
@@ -934,10 +940,6 @@ function ModalForm({
                 })}
               </div>
             </div>
-
-              
-
-            
 
             {/* Rules */}
             <div className="col-span-2">

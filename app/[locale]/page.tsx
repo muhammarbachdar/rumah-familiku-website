@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer';
 import { PropertyCard } from '@/components/PropertyCard';
 import { fetchProperties, fetchPromos, fetchHome, fetchFAQs } from '@/lib/api';
 import { getWhatsAppURL } from '@/lib/utils/whatsapp';
+import { isPromoActive } from '@/lib/utils/whatsapp';
 import Link from 'next/link';
 
 export default function Home() {
@@ -33,7 +34,9 @@ export default function Home() {
   }, []);
 
   const featuredProperties = properties.slice(0, 6);
-  const activePromos = promos.filter(p => p.active === true);
+  const activePromos = promos.filter(
+    (p) => p.active && isPromoActive(p.validUntil)
+  );
   const faqPreview = faqs.slice(0, 3);
 
   if (loading) {

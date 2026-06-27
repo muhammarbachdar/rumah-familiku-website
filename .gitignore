@@ -22,6 +22,22 @@ node_modules/
 
 # Archives
 *.zip
+*.tar.gz
+
+# Deploy artifacts & debugging files (jangan masuk Git)
+deploy_final/
+deploy/
+prisma-client-fix/
+prisma-package-fix/
+copy-standalone.js
+export-data.json
+export-data.js
+import-data.js
+import-data.json
+migrate-log.txt
+import-log.txt
+project-review.txt
+stderr.log
 
 # Logs
 npm-debug.log*

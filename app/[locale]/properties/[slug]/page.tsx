@@ -59,7 +59,7 @@ export default function PropertyDetailPage() {
               : null;
             setSelectedRoomTypeId(matchedFromQuery ? matchedFromQuery.roomTypeId : data.roomTypes[0].roomTypeId);
           }
-          if (property.type === 'kos' && data?.units?.length > 0) {
+          if ((property.type === 'kos' || property.type === 'apartemen') && data?.units?.length > 0) {
             setSelectedUnitId(data.units[0].unitId);
           }
           setAvailabilityLoading(false);
@@ -86,7 +86,7 @@ export default function PropertyDetailPage() {
   const getBookedDatesForDisplay = () => {
     if (!availabilityData) return [];
 
-    if (property?.type === 'kos' && selectedUnitId) {
+    if ((property?.type === 'kos' || property?.type === 'apartemen') && selectedUnitId) {
       const unit = availabilityData.units?.find((u: any) => u.unitId === selectedUnitId);
       return getBookedDates(unit?.bookings || []);
     }
@@ -170,10 +170,12 @@ export default function PropertyDetailPage() {
           />
         )}
         {property.type === 'apartemen' && (
-          <ApartemenDetail
+          <KosDetail
             property={property}
             availabilityData={availabilityData}
             availabilityLoading={availabilityLoading}
+            selectedUnitId={selectedUnitId}
+            setSelectedUnitId={setSelectedUnitId}
             bookedDates={bookedDates}
             siteData={siteData}
             activePromo={activePromo}

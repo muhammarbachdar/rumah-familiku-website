@@ -101,8 +101,8 @@ export default function PropertyPricingPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               {availabilityData?.roomTypes && availabilityData.roomTypes.length > 0 ? (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <table className="w-full text-sm">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+                  <table className="w-full text-sm min-w-[600px]">
                     <thead className="bg-cream">
                       <tr>
                         <th className="text-left px-4 py-3 font-medium text-gray-700">
