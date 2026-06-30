@@ -2,6 +2,22 @@
 
 import { useState, useEffect } from 'react';
 
+// Modal component (dipindahkan ke luar agar tidak remount tiap render)
+function Modal({ title, onSave, onClose, children }: any) {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md">
+        <h3 className="text-xl font-bold mb-4">{title}</h3>
+        {children}
+        <div className="flex gap-3 mt-6">
+          <button onClick={onSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg">Simpan</button>
+          <button onClick={onClose} className="flex-1 border py-2 rounded-lg">Batal</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ManageAboutSection() {
   const [content, setContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -121,18 +137,7 @@ export default function ManageAboutSection() {
     }
   };
 
-  const Modal = ({ title, onSave, onClose, children }: any) => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md">
-        <h3 className="text-xl font-bold mb-4">{title}</h3>
-        {children}
-        <div className="flex gap-3 mt-6">
-          <button onClick={onSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg">Simpan</button>
-          <button onClick={onClose} className="flex-1 border py-2 rounded-lg">Batal</button>
-        </div>
-      </div>
-    </div>
-  );
+  
 
   if (loading) return <div className="bg-white rounded-lg shadow p-6">Loading About data...</div>;
   if (!content) return <div className="bg-white rounded-lg shadow p-6">No data</div>;

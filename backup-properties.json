@@ -1,0 +1,1001 @@
+{
+  "exportedAt": "2026-06-28T10:06:25.082Z",
+  "properties": [
+    {
+      "id": "rf-2",
+      "slug": "rf-2-syariah",
+      "nameId": "RF 2 Syariah",
+      "nameEn": "RF 2 Sharia",
+      "type": "rumah",
+      "locationId": "Jakarta (dekat Mal Kota Kasablanka)s",
+      "locationEn": "Jakarta (near Mal Kota Kasablanka)",
+      "mapsUrl": null,
+      "capacityMin": 16,
+      "capacityMax": 25,
+      "pricingWeekday": 3500000,
+      "pricingWeekend": 4500000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": 60000,
+      "extraChargeUnit": "per_person",
+      "deposit": 500000,
+      "description": "Villa mewah yang cocok untuk rombongan keluarga besar, acara keluarga, atau gathering.",
+      "descriptionEn": "Luxury villa perfect for large family gatherings, family events, or corporate gatherings.",
+      "image": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [
+        {
+          "icon": "wifi",
+          "label": "WiFi Gratis",
+          "labelEn": "Free WiFi"
+        },
+        {
+          "icon": "ac",
+          "label": "AC",
+          "labelEn": "Air Conditioning"
+        },
+        {
+          "icon": "tv",
+          "label": "TV",
+          "labelEn": "TV"
+        },
+        {
+          "icon": "rooftop",
+          "label": "Rooftop",
+          "labelEn": "Rooftop"
+        }
+      ],
+      "rules": [
+        "Minimum 16 orang",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Minimum 16 people",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": true,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.185Z",
+      "updatedAt": "2026-06-27T03:25:48.862Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": [
+        {
+          "id": "bk-1782102494312-h6t11u",
+          "propertyId": "rf-2",
+          "unitId": null,
+          "roomId": null,
+          "startDate": "2026-06-23",
+          "endDate": "2026-06-24",
+          "note": "",
+          "createdAt": "2026-06-22T04:28:14.317Z",
+          "updatedAt": "2026-06-22T04:28:14.317Z"
+        },
+        {
+          "id": "bk-1782109442660-jaaxem",
+          "propertyId": "rf-2",
+          "unitId": null,
+          "roomId": null,
+          "startDate": "2026-06-24",
+          "endDate": "2026-06-25",
+          "note": "",
+          "createdAt": "2026-06-22T06:24:02.666Z",
+          "updatedAt": "2026-06-22T06:24:02.666Z"
+        }
+      ]
+    },
+    {
+      "id": "rf-3",
+      "slug": "rf-3-syariah",
+      "nameId": "RF 3 Syariah",
+      "nameEn": "RF 3 Sharia",
+      "type": "rumah",
+      "locationId": "Jakarta (dekat Blok M & GBK)",
+      "locationEn": "Jakarta (near Blok M & GBK)",
+      "mapsUrl": null,
+      "capacityMin": 17,
+      "capacityMax": 27,
+      "pricingWeekday": 4000000,
+      "pricingWeekend": 5000000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": 100000,
+      "extraChargeUnit": "per_person",
+      "deposit": 500000,
+      "description": "Villa bergaya minimalis modern dengan desain interior yang elegan.",
+      "descriptionEn": "Modern minimalist-style villa with elegant interior design.",
+      "image": "/uploads/properties/047802be-6291-4942-b15c-f400abcdd699.png",
+      "images": [
+        "/uploads/properties/e204271f-0e33-4ba9-93bc-7dc5d05d7b28.png",
+        "/uploads/properties/06fb331c-36f0-447f-ada6-6e38f4d22497.png",
+        "/uploads/properties/261e3060-825c-4a6c-bc1f-015eab557292.png",
+        "/uploads/properties/22481b4a-80f3-4dc9-9861-ce9cb92cc1d9.png",
+        "/uploads/properties/e637530f-99d4-4557-b00c-2df9eab5a326.png",
+        "/uploads/properties/e0b91b2a-4af2-49b3-95d1-35861eb897dd.png"
+      ],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Minimum 17 orang",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Minimum 17 people",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": true,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.201Z",
+      "updatedAt": "2026-06-27T03:25:48.872Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": []
+    },
+    {
+      "id": "rf-4",
+      "slug": "rf-4-syariah",
+      "nameId": "RF 4 Syariah",
+      "nameEn": "RF 4 Sharia",
+      "type": "rumah",
+      "locationId": "Jakarta Timur",
+      "locationEn": "East Jakarta",
+      "mapsUrl": null,
+      "capacityMin": 25,
+      "capacityMax": 50,
+      "pricingWeekday": 6000000,
+      "pricingWeekend": 7500000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": 1500000,
+      "extraChargeUnit": "per_group",
+      "deposit": 500000,
+      "description": "Villa terbesar dengan kapasitas tertinggi, ideal untuk acara rombongan besar atau keluarga besar.",
+      "descriptionEn": "Largest villa with highest capacity, ideal for large group events or big family gatherings.",
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Minimum 25 orang",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Minimum 25 people",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": true,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.203Z",
+      "updatedAt": "2026-06-27T03:25:48.881Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": []
+    },
+    {
+      "id": "rf-hotel-1",
+      "slug": "rf-hotel-1-syariah",
+      "nameId": "RF Hotel 1 Syariah",
+      "nameEn": "RF Hotel 1 syariah",
+      "type": "hotel",
+      "locationId": "Surabaya (dekat Bandara Juanda)",
+      "locationEn": "Surabaya (near Juanda Airport)",
+      "mapsUrl": "https://www.google.com/maps/place/Jl.+Hang+Jebat+No.10,+RT.5%2FRW.4,+Gunung,+Kec.+Kby.+Baru,+Kota+Jakarta+Selatan,+Daerah+Khusus+Ibukota+Jakarta+12120/@-6.2364833,106.7930299,18z/data=!4m15!1m8!3m7!1s0x2e69f1407893bab7:0xd13ad798d296fa66!2sJl.+Hang+Jebat+No.10,+RT.5%2FRW.4,+Gunung,+Kec.+Kby.+Baru,+Kota+Jakarta+Selatan,+Daerah+Khusus+Ibukota+Jakarta+12120!3b1!8m2!3d-6.2365713!4d106.79432!16s%2Fg%2F11wfssthlp!3m5!1s0x2e69f1407893bab7:0xd13ad798d296fa66!8m2!3d-6.2365713!4d106.79432!16s%2Fg%2F11wfssthlp?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D",
+      "capacityMin": 1,
+      "capacityMax": 4,
+      "pricingWeekday": 300000,
+      "pricingWeekend": 450000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": null,
+      "extraChargeUnit": null,
+      "deposit": null,
+      "description": "RF Hotel 1 adalah hotel butik dengan konsep syariah yang menghadirkan kenyamanan modern dengan nilai-nilai Islam.",
+      "descriptionEn": "RF Hotel 1 is a boutique hotel with a Sharia concept that brings modern comfort with Islamic values.",
+      "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+      "images": [
+        "/uploads/properties/2663eabf-58be-4072-a254-16c45a92e991.jpg",
+        "/uploads/properties/caaf4ab7-6dd2-4132-b1db-e9efab5e58b6.jpg",
+        "/uploads/properties/1e8eca8a-24f5-4c10-a565-c7f7b8cfc940.jpg"
+      ],
+      "imagesCategorized": null,
+      "facilities": [
+        {
+          "icon": "wifi",
+          "label": "WiFi Gratis",
+          "labelEn": "Free WiFi"
+        },
+        {
+          "icon": "pool",
+          "label": "Kolam Renang",
+          "labelEn": "Swimming Pool"
+        },
+        {
+          "icon": "parking",
+          "label": "Parkir Gratis",
+          "labelEn": "Free Parking"
+        },
+        {
+          "icon": "restaurant",
+          "label": "Restoran",
+          "labelEn": "Restaurant"
+        },
+        {
+          "icon": "security",
+          "label": "Keamanan 24 Jam",
+          "labelEn": "24-Hour Security"
+        },
+        {
+          "icon": "laundry",
+          "label": "Laundry",
+          "labelEn": "Laundry"
+        },
+        {
+          "icon": "petfriendly",
+          "label": "Pet Friendly",
+          "labelEn": "Pet Friendly"
+        },
+        {
+          "icon": "rooftop",
+          "label": "Rooftop",
+          "labelEn": "Rooftop"
+        },
+        {
+          "icon": "cctv",
+          "label": "CCTV",
+          "labelEn": "CCTV"
+        },
+        {
+          "icon": "smokingarea",
+          "label": "Area Merokok",
+          "labelEn": "Smoking Area"
+        },
+        {
+          "icon": "breakfast",
+          "label": "Sarapan",
+          "labelEn": "Breakfast"
+        },
+        {
+          "icon": "elevator",
+          "label": "Lift",
+          "labelEn": "Elevator"
+        },
+        {
+          "icon": "reception24",
+          "label": "Resepsionis 24 Jam",
+          "labelEn": "24-Hour Reception"
+        },
+        {
+          "icon": "ac",
+          "label": "AC",
+          "labelEn": "Air Conditioning"
+        },
+        {
+          "icon": "lobby",
+          "label": "Lobby Luas",
+          "labelEn": "Spacious Lobby"
+        },
+        {
+          "icon": "gym",
+          "label": "Gym",
+          "labelEn": "Gym"
+        },
+        {
+          "icon": "tv",
+          "label": "TV",
+          "labelEn": "TV"
+        },
+        {
+          "icon": "view",
+          "label": "View Bagus",
+          "labelEn": "Great View"
+        }
+      ],
+      "rules": [
+        "Wajibb buku nikah/KTP alamat sama untuk pasangan",
+        "Dilarang merokok di kamar",
+        "Dilarang minuman keras",
+        "Check-in: 14:00",
+        "Check-out: 12:00"
+      ],
+      "rulesEn": [
+        "Marriage certificate required for couples",
+        "No smoking in rooms",
+        "No alcoholic beverages",
+        "Check-in: 14:00, Check-out: 12:00"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": false,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.148Z",
+      "updatedAt": "2026-06-27T03:25:48.902Z",
+      "units": [
+        {
+          "id": "cmqoudhkl0000f0vjzagptxbt",
+          "unitId": "unit-1782110156846-99fh08",
+          "unitName": "10",
+          "propertyId": "rf-hotel-1",
+          "createdAt": "2026-06-22T06:35:56.853Z",
+          "updatedAt": "2026-06-22T06:35:56.853Z",
+          "bookings": []
+        }
+      ],
+      "roomTypes": [
+        {
+          "id": "cmqpgn8130000govjc5gr8mkf",
+          "roomTypeId": "rt-1782147554049-3roly2",
+          "nameId": "Deluxe",
+          "nameEn": "Deluxe",
+          "capacity": 2,
+          "priceWeekend": 500000,
+          "priceWeekday": 400000,
+          "images": [
+            "/uploads/properties/eb1bf49c-a929-4e22-a027-b30b41b23046.jpg",
+            "/uploads/properties/280f68ad-e83c-4647-b432-628013cf86c1.jpg"
+          ],
+          "propertyId": "rf-hotel-1",
+          "createdAt": "2026-06-22T16:59:22.599Z",
+          "updatedAt": "2026-06-27T03:25:48.933Z",
+          "rooms": [
+            {
+              "id": "cmqpgn8160001govjbaxbpunp",
+              "roomId": "room-1782147554049-glc07t",
+              "roomNumber": "102",
+              "roomTypeId": "cmqpgn8130000govjc5gr8mkf",
+              "createdAt": "2026-06-22T16:59:22.602Z",
+              "updatedAt": "2026-06-27T03:25:48.936Z",
+              "bookings": [
+                {
+                  "id": "bk-1782208332568-ir3c07",
+                  "propertyId": "rf-hotel-1",
+                  "unitId": null,
+                  "roomId": "cmqpgn8160001govjbaxbpunp",
+                  "startDate": "2026-06-22",
+                  "endDate": "2026-06-26",
+                  "note": "",
+                  "createdAt": "2026-06-23T09:52:12.570Z",
+                  "updatedAt": "2026-06-23T09:52:12.570Z"
+                },
+                {
+                  "id": "bk-1782208400714-1sxlbn",
+                  "propertyId": "rf-hotel-1",
+                  "unitId": null,
+                  "roomId": "cmqpgn8160001govjbaxbpunp",
+                  "startDate": "2026-06-26",
+                  "endDate": "2026-06-27",
+                  "note": "",
+                  "createdAt": "2026-06-23T09:53:20.716Z",
+                  "updatedAt": "2026-06-23T09:53:20.716Z"
+                }
+              ]
+            },
+            {
+              "id": "cmqpgn8170002govjeonmup88",
+              "roomId": "room-1782147561023-4kmjon",
+              "roomNumber": "109",
+              "roomTypeId": "cmqpgn8130000govjc5gr8mkf",
+              "createdAt": "2026-06-22T16:59:22.603Z",
+              "updatedAt": "2026-06-27T03:25:48.937Z",
+              "bookings": [
+                {
+                  "id": "bk-1782208323717-ia6pkq",
+                  "propertyId": "rf-hotel-1",
+                  "unitId": null,
+                  "roomId": "cmqpgn8170002govjeonmup88",
+                  "startDate": "2026-06-22",
+                  "endDate": "2026-06-27",
+                  "note": "",
+                  "createdAt": "2026-06-23T09:52:03.719Z",
+                  "updatedAt": "2026-06-23T09:52:03.719Z"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cmqq7f35m0003novjrip7pcng",
+          "roomTypeId": "rt-1782192528766-9mh9ti",
+          "nameId": "suite",
+          "nameEn": "suite",
+          "capacity": 2,
+          "priceWeekend": 649990,
+          "priceWeekday": 600000,
+          "images": [
+            "/uploads/properties/b90a7d52-fb4d-4e74-bb56-57bd1152cc5a.jpg"
+          ],
+          "propertyId": "rf-hotel-1",
+          "createdAt": "2026-06-23T05:28:52.666Z",
+          "updatedAt": "2026-06-27T03:25:48.939Z",
+          "rooms": [
+            {
+              "id": "cmqq7f35v0004novjworzqyop",
+              "roomId": "room-1782192528767-fgsmcc",
+              "roomNumber": "106",
+              "roomTypeId": "cmqq7f35m0003novjrip7pcng",
+              "createdAt": "2026-06-23T05:28:52.675Z",
+              "updatedAt": "2026-06-27T03:25:48.941Z",
+              "bookings": []
+            }
+          ]
+        }
+      ],
+      "promos": [],
+      "bookings": [
+        {
+          "id": "bk-1782208323717-ia6pkq",
+          "propertyId": "rf-hotel-1",
+          "unitId": null,
+          "roomId": "cmqpgn8170002govjeonmup88",
+          "startDate": "2026-06-22",
+          "endDate": "2026-06-27",
+          "note": "",
+          "createdAt": "2026-06-23T09:52:03.719Z",
+          "updatedAt": "2026-06-23T09:52:03.719Z"
+        },
+        {
+          "id": "bk-1782208332568-ir3c07",
+          "propertyId": "rf-hotel-1",
+          "unitId": null,
+          "roomId": "cmqpgn8160001govjbaxbpunp",
+          "startDate": "2026-06-22",
+          "endDate": "2026-06-26",
+          "note": "",
+          "createdAt": "2026-06-23T09:52:12.570Z",
+          "updatedAt": "2026-06-23T09:52:12.570Z"
+        },
+        {
+          "id": "bk-1782208400714-1sxlbn",
+          "propertyId": "rf-hotel-1",
+          "unitId": null,
+          "roomId": "cmqpgn8160001govjbaxbpunp",
+          "startDate": "2026-06-26",
+          "endDate": "2026-06-27",
+          "note": "",
+          "createdAt": "2026-06-23T09:53:20.716Z",
+          "updatedAt": "2026-06-23T09:53:20.716Z"
+        }
+      ]
+    },
+    {
+      "id": "rf-cempaka",
+      "slug": "rf-cempaka-syariah",
+      "nameId": "RF Cempaka Syariah",
+      "nameEn": "RF Cempaka Sharia",
+      "type": "apartemen",
+      "locationId": "Jakarta (Cempaka Mas)",
+      "locationEn": "Jakarta (Cempaka Mas)",
+      "mapsUrl": null,
+      "capacityMin": 4,
+      "capacityMax": 8,
+      "pricingWeekday": 1100000,
+      "pricingWeekend": 1400000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": null,
+      "extraChargeUnit": null,
+      "deposit": 500000,
+      "description": "Apartemen strategis dengan akses mudah ke transportasi umum dan pusat perbelanjaan.",
+      "descriptionEn": "Strategic apartment with easy access to public transportation and shopping centers.",
+      "image": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Keluarga/rombongan keluarga",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Families/family groups",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": false,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.176Z",
+      "updatedAt": "2026-06-27T03:25:48.838Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": [
+        {
+          "id": "bk-1782344250594-y79xow",
+          "propertyId": "rf-cempaka",
+          "unitId": null,
+          "roomId": null,
+          "startDate": "2026-06-25",
+          "endDate": "2026-06-26",
+          "note": "",
+          "createdAt": "2026-06-24T23:37:30.595Z",
+          "updatedAt": "2026-06-24T23:37:30.595Z"
+        },
+        {
+          "id": "bk-1782344260197-q56a0n",
+          "propertyId": "rf-cempaka",
+          "unitId": null,
+          "roomId": null,
+          "startDate": "2026-06-26",
+          "endDate": "2026-06-27",
+          "note": "",
+          "createdAt": "2026-06-24T23:37:40.198Z",
+          "updatedAt": "2026-06-24T23:37:40.198Z"
+        }
+      ]
+    },
+    {
+      "id": "kos-rf",
+      "slug": "kos-rumah-familiku",
+      "nameId": "Kos Rumah Familiku Syariah",
+      "nameEn": "Kos Rumah Familiku Sharia",
+      "type": "kos",
+      "locationId": "suraa",
+      "locationEn": "Surabaya (separate floor)",
+      "mapsUrl": null,
+      "capacityMin": 1,
+      "capacityMax": 1,
+      "pricingWeekday": null,
+      "pricingWeekend": null,
+      "pricingMode": "general",
+      "monthlyPrice": 2000000,
+      "monthlyPricingWNI": 0,
+      "monthlyPricingWNA": 0,
+      "extraChargeAmount": null,
+      "extraChargeUnit": null,
+      "deposit": 1500000,
+      "description": "Kos dengan standar keamanan dan kenyamanan tinggi, ideal untuk karyawan atau mahasiswa.",
+      "descriptionEn": "Boarding house with high safety and comfort standards, ideal for employees or students.",
+      "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Hanya untuk tamu single atau teman 1 gender",
+        "Dilarang merokok & minuman keras",
+        "Jam istirahat: 22:00 - 08:00"
+      ],
+      "rulesEn": [
+        "For single guests or same-gender friends only",
+        "No smoking & alcoholic beverages",
+        "Rest hours: 22:00 - 08:00"
+      ],
+      "notes": "Tidak termasuk: listrik, parkir mobil. Termasuk: AC, WiFi, air panas",
+      "notesEn": "Excludes: electricity, car parking. Includes: AC, WiFi, hot water",
+      "isGroupFriendly": false,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.158Z",
+      "updatedAt": "2026-06-27T03:25:48.890Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": []
+    },
+    {
+      "id": "rf-rasuna-1",
+      "slug": "rf-rasuna-1-syariah",
+      "nameId": "RF Rasuna 1 Syariah",
+      "nameEn": "RF Rasuna 1 Sharia",
+      "type": "apartemen",
+      "locationId": "Jakarta (Rasuna Said, lantai rendah)",
+      "locationEn": "Jakarta (Rasuna Said, low floor)",
+      "mapsUrl": null,
+      "capacityMin": 4,
+      "capacityMax": 8,
+      "pricingWeekday": 1200000,
+      "pricingWeekend": 1500000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": null,
+      "extraChargeUnit": null,
+      "deposit": 500000,
+      "description": "Apartemen 3 kamar yang nyaman dan luas, dilengkapi dengan dapur modern dan pemandangan taman.",
+      "descriptionEn": "Spacious 3-bedroom apartment equipped with modern kitchen and calming garden views.",
+      "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Keluarga/rombongan keluarga",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Families/family groups",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": false,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.163Z",
+      "updatedAt": "2026-06-27T03:25:48.946Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": []
+    },
+    {
+      "id": "rf-rasuna-2",
+      "slug": "rf-rasuna-2-syariah",
+      "nameId": "RF Rasuna 2 Syariah",
+      "nameEn": "RF Rasuna 2 Sharia",
+      "type": "apartemen",
+      "locationId": "Jakarta (Rasuna Said, view kota)",
+      "locationEn": "Jakarta (Rasuna Said, city view)",
+      "mapsUrl": null,
+      "capacityMin": 4,
+      "capacityMax": 8,
+      "pricingWeekday": 1300000,
+      "pricingWeekend": 1600000,
+      "pricingMode": null,
+      "monthlyPrice": null,
+      "monthlyPricingWNI": null,
+      "monthlyPricingWNA": null,
+      "extraChargeAmount": null,
+      "extraChargeUnit": null,
+      "deposit": 500000,
+      "description": "Apartemen premium dengan pemandangan kota yang spektakuler dari balkon pribadi.",
+      "descriptionEn": "Premium apartment with spectacular city views from private balcony.",
+      "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
+      "images": [],
+      "imagesCategorized": null,
+      "facilities": [],
+      "rules": [
+        "Keluarga/rombongan keluarga",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit untuk keamanan"
+      ],
+      "rulesEn": [
+        "Families/family groups",
+        "Check-in: 14:00, Check-out: 12:00",
+        "Deposit required for security"
+      ],
+      "notes": null,
+      "notesEn": null,
+      "isGroupFriendly": false,
+      "minGroupSize": null,
+      "version": 24,
+      "createdAt": "2026-06-22T04:15:48.169Z",
+      "updatedAt": "2026-06-27T03:25:48.951Z",
+      "units": [],
+      "roomTypes": [],
+      "promos": [],
+      "bookings": []
+    }
+  ],
+  "promos": [
+    {
+      "id": "promo-1",
+      "titleId": "Early Bird 20% - Apartemen Rasuna",
+      "titleEn": "Early Bird 20% - Rasuna Apartments",
+      "descriptionId": "Dapatkan diskon 20% untuk pemesanan lebih dari 5 malam di RF Rasuna 1 & 2. Berlaku hingga akhir bulan ini!",
+      "descriptionEn": "Get 20% discount for bookings of more than 2 nights at RF Rasuna 1 & 2. Valid until end of this month!",
+      "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
+      "validUntil": "2027-10-31",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-06-22T04:14:14.045Z",
+      "updatedAt": "2026-06-22T04:14:14.045Z",
+      "properties": []
+    },
+    {
+      "id": "promo-2",
+      "titleId": "Group Special - Rombongan 25+ Orang",
+      "titleEn": "Group Special - 25+ People Groups",
+      "descriptionId": "Khusus rombongan 25+ orang, dapatkan harga spesial dan layanan tambahan gratis untuk RF 3 & RF 4!",
+      "descriptionEn": "Special pricing for groups of 25+ people with free additional services at RF 3 & RF 4!",
+      "image": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+      "validUntil": "2024-12-31",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-06-22T04:14:14.047Z",
+      "updatedAt": "2026-06-22T04:14:14.047Z",
+      "properties": []
+    },
+    {
+      "id": "promo-3",
+      "titleId": "Winter Staycation - Hotel Special",
+      "titleEn": "Winter Staycation - Hotel Special",
+      "descriptionId": "[DUMMY] Paket spesial musim dingin untuk staycation keluarga. Nikmati suasana nyaman dengan konsep syariah.",
+      "descriptionEn": "[DUMMY] Special winter package for family staycation. Enjoy a comfortable atmosphere with Sharia concept.",
+      "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+      "validUntil": "2024-12-15",
+      "active": false,
+      "version": 1,
+      "createdAt": "2026-06-22T04:14:14.049Z",
+      "updatedAt": "2026-06-22T04:14:14.049Z",
+      "properties": []
+    }
+  ],
+  "faqs": [
+    {
+      "id": "faq-1",
+      "categoryId": "Umum",
+      "categoryEn": "General",
+      "questionId": "Apa itu Rumah Familiku Syariah?",
+      "questionEn": "What is Rumah Familiku Syariah?",
+      "answerIdContent": "Rumah Familiku Syariah adalah tempat penyedia hunian syariah yang menawarkan hotel, kos, apartemen, dan villa dengan prinsip-prinsip Islam.",
+      "answerEnContent": "Rumah Familiku Syariah is a sharia-compliant accommodation provider offering hotels, boarding houses, apartments, and villas based on Islamic principles.",
+      "version": 1,
+      "createdAt": "2026-06-21T09:47:48.732Z",
+      "updatedAt": "2026-06-21T09:51:45.933Z"
+    },
+    {
+      "id": "faq-2",
+      "categoryId": "Booking",
+      "categoryEn": "Booking",
+      "questionId": "Bagaimana cara melakukan booking?",
+      "questionEn": "How do I make a booking?",
+      "answerIdContent": "Anda dapat melakukan booking melalui WhatsApp kami di +62 878 7695 752.",
+      "answerEnContent": "You can make a booking via our WhatsApp at +62 878 7695 752.",
+      "version": 1,
+      "createdAt": "2026-06-21T09:47:48.743Z",
+      "updatedAt": "2026-06-21T09:51:45.942Z"
+    },
+    {
+      "id": "faq-3",
+      "categoryId": "Pembayaran",
+      "categoryEn": "Payment",
+      "questionId": "Metode pembayaran apa yang diterima?",
+      "questionEn": "What payment methods are accepted?",
+      "answerIdContent": "Kami menerima transfer bank dan pembayaran tunai.",
+      "answerEnContent": "We accept bank transfers and cash payments.",
+      "version": 1,
+      "createdAt": "2026-06-21T09:47:48.750Z",
+      "updatedAt": "2026-06-21T09:51:45.949Z"
+    }
+  ],
+  "about": [
+    {
+      "id": "cmqnlsdkl0004qcvjmjycom4v",
+      "mission": "Misi kami yaitu menyediakan hunian berkualitas tinggi yang menggabungkan kenyamanan modern dengan nilai-nilai Islami.",
+      "missionEn": "Our mission is to provide high-quality accommodation that combines modern comfort with Islamic values.",
+      "ctaTitle": "Siap Menemukan Hunian Impian Anda?",
+      "ctaTitleEn": "Ready to Find Your Dream Home?",
+      "ctaDesc": "Hubungi kami hari ini dan dapatkan konsultasi gratis tentang properti yang paling sesuai dengan kebutuhan Anda.",
+      "ctaDescEn": "Contact us today and get a free consultation about the property that best suits your needs.",
+      "values": [
+        {
+          "desc": "Setiap detail properti kami dirancang dengan mempertimbangkan nilai-nilai Islam.",
+          "title": "Konsep Syariah",
+          "descEn": "Every detail of our property is designed with Islamic values in mind.",
+          "titleEn": "Sharia Concept"
+        },
+        {
+          "desc": "Kami memprioritaskan hunian yang aman dan nyaman untuk keluarga.",
+          "title": "Keluarga Pertama",
+          "descEn": "We prioritize safe and comfortable housing for families.",
+          "titleEn": "Family First"
+        },
+        {
+          "desc": "Tidak ada biaya tersembunyi. Kami selalu transparan dalam setiap transaksi.",
+          "title": "Kejujuran & Transparansi",
+          "descEn": "No hidden fees. We are always transparent in every transaction.",
+          "titleEn": "Honesty & Transparency"
+        },
+        {
+          "desc": "24/7 support dan responsif terhadap kebutuhan tamu adalah komitmen kami.",
+          "title": "Layanan Terbaik",
+          "descEn": "24/7 support and responsiveness to guest needs is our commitment.",
+          "titleEn": "Best Service"
+        }
+      ],
+      "whyChooseUs": [
+        {
+          "icon": "🕌",
+          "descEn": "Safe and aligned with Islamic values",
+          "descId": "Aman dan sesuai nilai Islam",
+          "titleEn": "Sharia Concept",
+          "titleId": "Konsep Syariah"
+        },
+        {
+          "icon": "👨‍👩‍👧",
+          "descEn": "For families & same-gender friends",
+          "descId": "Hanya keluarga & teman 1 gender",
+          "titleEn": "Family Only",
+          "titleId": "Khusus Keluarga"
+        },
+        {
+          "icon": "📍",
+          "descEn": "Close to city, malls, transport",
+          "descId": "Dekat kota, mall, transportasi",
+          "titleEn": "Strategic Location",
+          "titleId": "Lokasi Strategis"
+        },
+        {
+          "icon": "💬",
+          "descEn": "Direct WhatsApp chat, no hassle",
+          "descId": "Chat WhatsApp, tanpa ribet",
+          "titleEn": "Easy Booking",
+          "titleId": "Booking Mudah"
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-06-21T09:47:48.790Z",
+      "updatedAt": "2026-06-22T04:16:58.451Z"
+    }
+  ],
+  "homeContent": [
+    {
+      "id": "cmqnlsdky0005qcvjqai32k7k",
+      "heroTitleId": "Hunian Nyaman, Aman & Syariah",
+      "heroTitleEn": "Comfortable, Safe & Sharia-Compliant Stay",
+      "heroSubtitleId": "Hotel, Kos, Apartemen & Villa di Jakarta dan Surabaya",
+      "heroSubtitleEn": "Hotel, Boarding House, Apartment & Villa in Jakarta and Surabaya",
+      "heroCtaPrimaryId": "Lihat Properti",
+      "heroCtaPrimaryEn": "View Properties",
+      "heroCtaSecondaryId": "Hubungi Kami via WhatsApp",
+      "heroCtaSecondaryEn": "Contact Us on WhatsApp",
+      "heroImage": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1920&q=80",
+      "propertyTypes": [
+        {
+          "icon": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&q=80",
+          "labelEn": "Hotel",
+          "labelId": "Hotel"
+        },
+        {
+          "icon": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&q=80",
+          "labelEn": "Boarding House",
+          "labelId": "Kos"
+        },
+        {
+          "icon": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&q=80",
+          "labelEn": "Apartment",
+          "labelId": "Apartemen"
+        },
+        {
+          "icon": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=80",
+          "labelEn": "House / Villa",
+          "labelId": "Rumah / Villa"
+        }
+      ],
+      "whyUs": [
+        {
+          "icon": "🕌",
+          "descEn": "Safe and aligned with Islamic values",
+          "descId": "Aman dan sesuai nilai Islam",
+          "titleEn": "Sharia Concept",
+          "titleId": "Konsep Syariah"
+        },
+        {
+          "icon": "👨‍👩‍👧",
+          "descEn": "For families, relatives, or same-gender groups only",
+          "descId": "Hanya untuk keluarga, saudara, atau teman 1 gender",
+          "titleEn": "Family Only",
+          "titleId": "Khusus Keluarga"
+        },
+        {
+          "icon": "📍",
+          "descEn": "Close to city center, malls, and public transport",
+          "descId": "Dekat pusat kota, mall, dan transportasi umum",
+          "titleEn": "Strategic Location",
+          "titleId": "Lokasi Strategis"
+        },
+        {
+          "icon": "💬",
+          "descEn": "Direct WhatsApp chat, no hassle",
+          "descId": "Langsung chat WhatsApp, tanpa ribet",
+          "titleEn": "Easy Booking",
+          "titleId": "Booking Mudah"
+        }
+      ],
+      "reviews": [
+        {
+          "name": "Budi ",
+          "rating": 5,
+          "textEn": "Very satisfying service and clean place.",
+          "textId": "Pelayanannya sangat memuaskan dan tempatnya bersih."
+        },
+        {
+          "name": "Siti Rahma",
+          "rating": 5,
+          "textEn": "Great for family events, strategic and affordable location.",
+          "textId": "Cocok untuk acara keluarga, lokasi strategis dan terjangkau."
+        },
+        {
+          "name": "Ahmad Wijaya",
+          "rating": 5,
+          "textEn": "Safe and comfortable accommodation, consistent with the promised sharia concept.",
+          "textId": "Hunian aman dan nyaman, sesuai dengan konsep syariah yang dijanjikan."
+        }
+      ],
+      "version": 1,
+      "createdAt": "2026-06-21T09:47:48.802Z",
+      "updatedAt": "2026-06-22T04:18:34.000Z"
+    }
+  ],
+  "siteSettings": [
+    {
+      "id": "cmqnlsdls0006qcvjrovjmqel",
+      "siteName": "Rumah Familiku",
+      "logoText": "RF",
+      "whatsappNumber": "+6288901610828",
+      "email": "rumahfamiliku@gmail.com",
+      "instagramUrl": "https://instagram.com",
+      "footerTagline": "Hunian Syariah Nyaman untuk Keluarga",
+      "copyrightText": "© 2024 Rumah Familiku Syariah. All rights reserved.",
+      "navLinks": [
+        {
+          "href": "/",
+          "label": "nav.home"
+        },
+        {
+          "href": "/properties",
+          "label": "nav.properties"
+        },
+        {
+          "href": "/promo",
+          "label": "nav.promo"
+        },
+        {
+          "href": "/about",
+          "label": "nav.about"
+        },
+        {
+          "href": "/faq",
+          "label": "nav.faq"
+        }
+      ],
+      "version": 4,
+      "createdAt": "2026-06-21T09:47:48.832Z",
+      "updatedAt": "2026-06-24T03:56:01.660Z"
+    }
+  ],
+  "appearanceSettings": [
+    {
+      "id": "cmqnlsdml0007qcvj43ak2wyz",
+      "primaryColor": "#288129",
+      "accentColor": "#15150e",
+      "backgroundColor": "#ffffff",
+      "version": 4,
+      "createdAt": "2026-06-21T09:47:48.861Z",
+      "updatedAt": "2026-06-24T09:09:39.454Z"
+    }
+  ],
+  "adminUsers": [
+    {
+      "id": "cmqnlxgn20000lsvjy9hi74xj",
+      "username": "admin",
+      "password": "$2b$10$pcMG1BEo.Nej1ItTYdj1UeXZGK/vh48jFw9k4I9bp9lxT.6UMA5JO",
+      "createdAt": "2026-06-21T09:51:46.047Z",
+      "updatedAt": "2026-06-21T09:51:46.047Z"
+    }
+  ]
+}

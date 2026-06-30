@@ -53,6 +53,10 @@ export const PropertySchema = z.object({
   descriptionEn: z.string().min(1, 'Deskripsi (EN) wajib diisi'),
   image: z.string().min(1, 'Gambar wajib diisi'),
   images: z.array(z.string()).optional(),
+  imagesCategorized: z.array(z.object({
+    url: z.string(),
+    category: z.string(),
+  })).optional(),
   facilities: z.array(z.object({
     label: z.string(),
     labelEn: z.string(),

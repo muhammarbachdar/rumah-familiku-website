@@ -33,19 +33,15 @@ export function HotelDetail({
   const [showShare, setShowShare] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const displayName = locale === 'id' ? property.nameId : property.nameEn;
   const displayLocation = locale === 'id' ? property.locationId : property.locationEn;
   const displayDescription = locale === 'id' ? property.description : property.descriptionEn;
   const displayRules = locale === 'id' ? property.rules : property.rulesEn;
-
-  const allPhotos: { url: string; category: string }[] =
-    property.imagesCategorized && property.imagesCategorized.length > 0
-      ? property.imagesCategorized
-      : (property.images || []).map((url: string) => ({ url, category: '' }));
-
-  const heroPhoto = allPhotos[0];
-  const sidePhotos = allPhotos.slice(1, 5);
+  const allPhotos: { url: string; category: string }[] = property.imagesCategorized || [];
+  const activePhoto = allPhotos[activePhotoIndex];
+  const goToPrevPhoto = () => setActivePhotoIndex((i) => (i === 0 ? allPhotos.length - 1 : i - 1));
+  const goToNextPhoto = () => setActivePhotoIndex((i) => (i === allPhotos.length - 1 ? 0 : i + 1));
 
   const shareURL = typeof window !== 'undefined' ? window.location.href : '';
   const handleCopyLink = () => {
@@ -70,31 +66,33 @@ export function HotelDetail({
     <section className="py-6 md:py-8">
       <div className="container mx-auto px-4">
         {/* ===== GALERI ===== */}
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-2 mb-6">
-          {heroPhoto && (
-            <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden">
-              <img src={heroPhoto.url} alt={displayName} className="w-full h-full object-cover" />
-              {allPhotos.length > 1 && (
+        {activePhoto && (
+          <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden mb-6">
+            <img src={activePhoto.url} alt={displayName} className="w-full h-full object-cover" />
+            {allPhotos.length > 1 && (
+              <>
                 <button
-                  onClick={() => setShowAllPhotos(true)}
-                  className="absolute bottom-4 left-4 bg-white/90 hover:bg-white text-charcoal text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                  onClick={goToPrevPhoto}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal rounded-full w-9 h-9 flex items-center justify-center text-xl transition"
+                  aria-label="Previous photo"
                 >
-                  <Images className="w-4 h-4" />
-                  {locale === 'id' ? `Lihat semua foto (${allPhotos.length})` : `See all photos (${allPhotos.length})`}
+                  ‹
                 </button>
-              )}
-            </div>
-          )}
-          {sidePhotos.length > 0 && (
-            <div className="grid grid-cols-2 gap-2 h-72 md:h-96">
-              {sidePhotos.map((photo, idx) => (
-                <div key={idx} className="rounded-xl overflow-hidden">
-                  <img src={photo.url} alt={`${displayName} ${idx + 2}`} className="w-full h-full object-cover" />
+                <button
+                  onClick={goToNextPhoto}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-charcoal rounded-full w-9 h-9 flex items-center justify-center text-xl transition"
+                  aria-label="Next photo"
+                >
+                  ›
+                </button>
+                <div className="absolute bottom-4 right-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                  {activePhotoIndex + 1} / {allPhotos.length}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                
+              </>
+            )}
+          </div>
+        )}
 
         {/* Modal semua foto - grid, bisa diklik */}
         {showAllPhotos && (

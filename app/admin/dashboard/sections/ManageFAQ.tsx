@@ -167,6 +167,7 @@ export default function ManageFAQSection() {
     const updated = faqs.map(f => f.id === editingFaq.id ? form : f);
     setFaqs(updated);
     await saveToAPI(updated);
+    await loadData();
     setEditingFaq(null);
   };
 
@@ -187,6 +188,7 @@ export default function ManageFAQSection() {
     const newFaqs = [...faqs, form];
     setFaqs(newFaqs);
     await saveToAPI(newFaqs);
+    await loadData();
     setShowAddModal(false);
   };
 
@@ -195,6 +197,7 @@ export default function ManageFAQSection() {
       const filtered = faqs.filter(f => f.id !== id);
       setFaqs(filtered);
       await saveToAPI(filtered);
+      await loadData();
     }
   };
 

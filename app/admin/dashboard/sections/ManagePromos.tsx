@@ -175,6 +175,7 @@ export default function ManagePromosSection() {
     const updated = promos.map(p => p.id === editingPromo.id ? form : p); 
     setPromos(updated); 
     await saveToAPI(updated); 
+    await loadData();
     setEditingPromo(null); 
   };
   
@@ -191,6 +192,7 @@ export default function ManagePromosSection() {
     const newPromos = [...promos, form]; 
     setPromos(newPromos); 
     await saveToAPI(newPromos); 
+    await loadData();
     setShowAddModal(false); 
   };
   
@@ -199,6 +201,7 @@ export default function ManagePromosSection() {
       const filtered = promos.filter(p => p.id !== id); 
       setPromos(filtered); 
       await saveToAPI(filtered); 
+      await loadData();
     } 
   };
 

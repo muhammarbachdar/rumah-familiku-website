@@ -754,83 +754,10 @@ function ModalForm({
               )}
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gallery Images</label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={async (e) => {
-                    const files = e.target.files;
-                    if (!files || files.length === 0) return;
-                    const uploadPromises = Array.from(files).map(async (file) => {
-                      const formData = new FormData();
-                      formData.append('file', file);
-                      const res = await fetch('/api/admin/upload', {
-                        method: 'POST',
-                        body: formData,
-                      });
-                      if (!res.ok) {
-                        const err = await res.json();
-                        throw new Error(err.error || 'Upload gagal');
-                      }
-                      const data = await res.json();
-                      return data.url;
-                    });
-                    try {
-                      const urls = await Promise.all(uploadPromises);
-                      setForm((prev: any) => ({
-                        ...prev,
-                        images: [...prev.images, ...urls],
-                      }));
-                    } catch (err: any) {
-                      toast.error(err.message || 'Salah satu gambar gagal diupload.');
-                      console.error(err);
-                    }
-                    e.target.value = '';
-                  }}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                />
-                <span className="text-xs text-gray-500">(max 5MB per file, JPG/PNG/WebP)</span>
-              </div>
-              {form.images.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {form.images.map((img: string, idx: number) => (
-                    <div key={idx} className="relative inline-block">
-                      <img src={img} className="h-16 w-16 object-cover rounded border" alt={`Gallery ${idx}`} />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setForm((prev: any) => ({
-                            ...prev,
-                            images: prev.images.filter((_: string, i: number) => i !== idx),
-                          }));
-                        }}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Galeri Kategori (Eksterior / Lobby / Fasilitas / Kamar)
+                Galeri Foto
               </label>
               <div className="flex items-center gap-3 mb-2">
-                <select
-                  id="categorySelect"
-                  defaultValue="eksterior"
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                >
-                  <option value="eksterior">Eksterior</option>
-                  <option value="lobby">Lobby & Area Umum</option>
-                  <option value="fasilitas">Fasilitas</option>
-                  <option value="kamar">Cuplikan Kamar</option>
-                </select>
                 <input
                   type="file"
                   accept="image/*"
@@ -838,8 +765,6 @@ function ModalForm({
                   onChange={async (e) => {
                     const files = e.target.files;
                     if (!files || files.length === 0) return;
-                    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
-                    const category = categorySelect?.value || 'eksterior';
                     const uploadPromises = Array.from(files).map(async (file) => {
                       const formData = new FormData();
                       formData.append('file', file);
@@ -852,7 +777,7 @@ function ModalForm({
                         throw new Error(err.error || 'Upload gagal');
                       }
                       const data = await res.json();
-                      return { url: data.url, category };
+                      return { url: data.url, category: '' };
                     });
                     try {
                       const newItems = await Promise.all(uploadPromises);
@@ -868,15 +793,13 @@ function ModalForm({
                   }}
                   className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
                 />
+                <span className="text-xs text-gray-500">(max 5MB per file, JPG/PNG/WebP)</span>
               </div>
               {form.imagesCategorized && form.imagesCategorized.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {form.imagesCategorized.map((item: { url: string; category: string }, idx: number) => (
                     <div key={idx} className="relative inline-block">
-                      <img src={item.url} className="h-16 w-16 object-cover rounded border" alt={`${item.category} ${idx}`} />
-                      <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-0.5 rounded-b">
-                        {item.category}
-                      </span>
+                      <img src={item.url} className="h-16 w-16 object-cover rounded border" alt={`Galeri ${idx}`} />
                       <button
                         type="button"
                         onClick={() => {

@@ -56,6 +56,8 @@
     "seeAll": "See All FAQs"
   },
   "propertyDetail": {
+    "monthlyWNI": "Monthly Price (Local)",
+    "monthlyWNA": "Monthly Price (Foreigner)",
     "capacity": "Capacity",
     "people": "{count} people",
     "extraCharge": "Extra Charge",

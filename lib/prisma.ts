@@ -1,8 +1,17 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
-});
+declare global {
+  // eslint-disable-next-line no-var
+  var pgPool: Pool | undefined;
+}
 
-export const prisma = new PrismaClient({ adapter });
+export const pool =
+  global.pgPool ??
+  new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 5, // shared hosting, jangan terlalu besar
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  global.pgPool = pool;
+}
