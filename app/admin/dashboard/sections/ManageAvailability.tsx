@@ -48,9 +48,10 @@ export default function ManageAvailabilitySection() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [props, avail] = await Promise.all([fetchProperties(), fetchAvailability()]);
-      setProperties(props || []);
-      if (props && props.length > 0) {
+      const [propsResult, avail] = await Promise.all([fetchProperties(1, 1000), fetchAvailability()]);
+      const props = propsResult?.data || [];
+      setProperties(props);
+      if (props.length > 0) {
         setSelectedPropertyId(props[0].id);
         setSelectedProperty(props[0]);
         const propAvail = avail?.[props[0].id] || null;

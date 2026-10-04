@@ -22,9 +22,9 @@ export default function ManagePricesSection({ isActive }: { isActive?: boolean }
   useEffect(() => { if (isActive) loadData(); }, [isActive]);
   
   const loadData = async () => {
-    const res = await fetch('/api/admin/data?type=properties');
+    const res = await fetch('/api/admin/data?type=properties&limit=1000');
     const data = await res.json();
-    setProperties(data || []);
+    setProperties(data?.data || []);
     setLoading(false);
   };
   
