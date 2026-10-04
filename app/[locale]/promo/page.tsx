@@ -1,47 +1,21 @@
 // app/[locale]/promo/page.tsx
-'use client';
-
-import { useTranslations, useLocale } from 'next-intl';
-import { useState, useEffect } from 'react';
+import { getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { fetchPromos } from '@/lib/api';
+import { getPromos } from '@/lib/data/content';
 import { formatDate, getWhatsAppURL, isPromoActive } from '@/lib/utils/whatsapp';
 
-export default function PromoPage() {
-  const t = useTranslations();
-  const locale = useLocale();
-  const [promos, setPromos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function PromoPage() {
+  const t = await getTranslations();
+  const locale = await getLocale();
+  
+  const promosData = await getPromos();
+  const promos = promosData || [];
 
-  useEffect(() => {
-    fetchPromos()
-      .then(data => {
-        setPromos(data || []);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load promos:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  // isPromoActive sudah di-fix menggunakan date-fns normalize
   const activePromos = promos.filter(
-    (p) => p.active && isPromoActive(p.validUntil)
+    (p: any) => p.active && isPromoActive(p.validUntil)
   );
-
-  if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-gray-text">{t('common.loading')}</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -65,7 +39,7 @@ export default function PromoPage() {
           <div className="container mx-auto px-4">
             {activePromos.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {activePromos.map((promo) => {
+                {activePromos.map((promo: any) => {
                   const displayTitle = locale === 'id' ? promo.titleId : promo.titleEn;
                   const displayDesc = locale === 'id' ? promo.descriptionId : promo.descriptionEn;
 

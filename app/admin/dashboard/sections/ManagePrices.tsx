@@ -1,11 +1,15 @@
+// app/admin/dashboard/sections/ManagePrices.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner'; // ✅ Tambahkan import
 
-export default function ManagePricesSection() {
+export default function ManagePricesSection({ isActive }: { isActive?: boolean }) {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<any>(null);
+  // ✅ TAMBAHKAN: isSubmitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState({ 
     weekday: 0, weekend: 0,
     pricingMode: 'wni-wna',
@@ -15,12 +19,15 @@ export default function ManagePricesSection() {
   });
 
   useEffect(() => { loadData(); }, []);
+  useEffect(() => { if (isActive) loadData(); }, [isActive]);
+  
   const loadData = async () => {
     const res = await fetch('/api/admin/data?type=properties');
     const data = await res.json();
     setProperties(data || []);
     setLoading(false);
   };
+  
   const saveToAPI = async (data: any) => {
     await fetch('/api/admin/data?type=properties', {
       method: 'POST',
@@ -52,44 +59,58 @@ export default function ManagePricesSection() {
     }
   };
 
+  // ✅ TAMBAHKAN: handleSave dengan isSubmitting
   const handleSave = async () => {
-    let updated;
-    if (editingItem.type === 'kos') {
-      if (editForm.pricingMode === 'general') {
-        updated = properties.map(p => p.id === editingItem.id 
-          ? { 
-              ...p, 
-              pricingMode: 'general',
-              monthlyPrice: editForm.monthlyPrice,
-              monthlyPricingWNI: undefined,
-              monthlyPricingWNA: undefined
-            } 
-          : p
-        );
+    // Prevent double submit
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+
+    try {
+      let updated;
+      if (editingItem.type === 'kos') {
+        if (editForm.pricingMode === 'general') {
+          updated = properties.map(p => p.id === editingItem.id 
+            ? { 
+                ...p, 
+                pricingMode: 'general',
+                monthlyPrice: editForm.monthlyPrice,
+                monthlyPricingWNI: undefined,
+                monthlyPricingWNA: undefined
+              } 
+            : p
+          );
+        } else {
+          updated = properties.map(p => p.id === editingItem.id 
+            ? { 
+                ...p, 
+                pricingMode: 'wni-wna',
+                monthlyPricingWNI: editForm.monthlyPricingWNI,
+                monthlyPricingWNA: editForm.monthlyPricingWNA,
+                monthlyPrice: undefined
+              } 
+            : p
+          );
+        }
       } else {
         updated = properties.map(p => p.id === editingItem.id 
           ? { 
               ...p, 
-              pricingMode: 'wni-wna',
-              monthlyPricingWNI: editForm.monthlyPricingWNI,
-              monthlyPricingWNA: editForm.monthlyPricingWNA,
-              monthlyPrice: undefined
+              pricing: { weekday: editForm.weekday, weekend: editForm.weekend }
             } 
           : p
         );
       }
-    } else {
-      updated = properties.map(p => p.id === editingItem.id 
-        ? { 
-            ...p, 
-            pricing: { weekday: editForm.weekday, weekend: editForm.weekend }
-          } 
-        : p
-      );
+      setProperties(updated);
+      await saveToAPI(updated);
+      setEditingItem(null);
+      toast.success('Harga berhasil diperbarui!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menyimpan harga.');
+      console.error('Save price failed:', error);
+    } finally {
+      setIsSubmitting(false);
     }
-    setProperties(updated);
-    await saveToAPI(updated);
-    setEditingItem(null);
   };
 
   if (loading) return <div className="bg-white rounded-lg shadow p-6">Loading prices...</div>;
@@ -230,8 +251,24 @@ export default function ManagePricesSection() {
             )}
 
             <div className="flex gap-3 mt-6">
-              <button onClick={handleSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition">Simpan</button>
-              <button onClick={() => setEditingItem(null)} className="flex-1 border py-2 rounded-lg hover:bg-gray-50 transition">Batal</button>
+              <button 
+                onClick={handleSave} 
+                disabled={isSubmitting}
+                className={`flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                {isSubmitting ? 'Menyimpan...' : 'Simpan'}
+              </button>
+              <button 
+                onClick={() => setEditingItem(null)} 
+                disabled={isSubmitting}
+                className={`flex-1 border py-2 rounded-lg hover:bg-gray-50 transition ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                Batal
+              </button>
             </div>
           </div>
         </div>

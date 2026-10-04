@@ -1,16 +1,83 @@
+// app/admin/dashboard/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ManageHomeSection from './sections/ManageHome';
-import ManagePricesSection from './sections/ManagePrices';
-import ManagePromosSection from './sections/ManagePromos';
-import ManagePropertiesSection from './sections/ManageProperties';
-import ManageFAQSection from './sections/ManageFAQ';
-import ManageAboutSection from './sections/ManageAbout';
-import ManageAppearanceSection from './sections/ManageAppearance';
-import ManageSiteSection from './sections/ManageSite';
-import ManageAvailabilitySection from './sections/ManageAvailability';
+import dynamic from 'next/dynamic';
+
+// ===== LAZY LOAD SEMUA SECTION DENGAN next/dynamic =====
+// Komponen hanya di-load ketika tab di-klik
+const ManageHomeSection = dynamic(
+  () => import('./sections/ManageHome'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManagePricesSection = dynamic(
+  () => import('./sections/ManagePrices'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManagePromosSection = dynamic(
+  () => import('./sections/ManagePromos'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManagePropertiesSection = dynamic(
+  () => import('./sections/ManageProperties'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManageFAQSection = dynamic(
+  () => import('./sections/ManageFAQ'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManageAboutSection = dynamic(
+  () => import('./sections/ManageAbout'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManageAppearanceSection = dynamic(
+  () => import('./sections/ManageAppearance'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManageSiteSection = dynamic(
+  () => import('./sections/ManageSite'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
+
+const ManageAvailabilitySection = dynamic(
+  () => import('./sections/ManageAvailability'),
+  { 
+    ssr: false,
+    loading: () => <div className="bg-white rounded-lg shadow p-6">Loading...</div>
+  }
+);
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -23,14 +90,14 @@ export default function AdminDashboard() {
   const [totalFaqs, setTotalFaqs] = useState(0);
   const [loadingOverview, setLoadingOverview] = useState(true);
 
-  // Fetch data overview
+  // Fetch data overview (hanya untuk dashboard utama)
   useEffect(() => {
     const fetchOverviewData = async () => {
       setLoadingOverview(true);
       try {
         const propertiesRes = await fetch('/api/admin/data?type=properties');
         const propertiesData = await propertiesRes.json();
-        setTotalProperties(propertiesData?.length || 0);
+        setTotalProperties(propertiesData?.data?.length || propertiesData?.length || 0);
 
         const promosRes = await fetch('/api/admin/data?type=promos');
         const promosData = await promosRes.json();
@@ -51,9 +118,7 @@ export default function AdminDashboard() {
   }, []);
 
   const handleLogout = async () => {
-    // Hapus session via API (httpOnly cookie akan dihapus server-side)
     await fetch('/api/admin/logout', { method: 'POST' });
-    // Redirect ke halaman login
     router.push('/admin');
     router.refresh();
   };
@@ -68,6 +133,55 @@ export default function AdminDashboard() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Fungsi untuk render tab content dengan lazy loading
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-text text-sm mb-2">Total Properties</p>
+              <p className="text-3xl font-bold text-brand-green">
+                {loadingOverview ? '...' : totalProperties}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-text text-sm mb-2">Active Promos</p>
+              <p className="text-3xl font-bold text-gold">
+                {loadingOverview ? '...' : activePromos}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-text text-sm mb-2">FAQ Items</p>
+              <p className="text-3xl font-bold text-blue-600">
+                {loadingOverview ? '...' : totalFaqs}
+              </p>
+            </div>
+          </div>
+        );
+      case 'prices':
+        return <ManagePricesSection isActive={activeTab === 'prices'} />;
+      case 'promos':
+        return <ManagePromosSection />;
+      case 'properties':
+        return <ManagePropertiesSection />;
+      case 'faq':
+        return <ManageFAQSection />;
+      case 'about':
+        return <ManageAboutSection />;
+      case 'appearance':
+        return <ManageAppearanceSection />;
+      case 'site':
+        return <ManageSiteSection />;
+      case 'home':
+        return <ManageHomeSection />;
+      case 'availability':
+        return <ManageAvailabilitySection />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -130,58 +244,8 @@ export default function AdminDashboard() {
             <h1 className="text-2xl md:text-3xl font-bold text-charcoal">Admin Dashboard</h1>
           </div>
 
-          {/* ===== OVERVIEW ===== */}
-          <div style={{ display: activeTab === 'overview' ? 'block' : 'none' }}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-gray-text text-sm mb-2">Total Properties</p>
-                <p className="text-3xl font-bold text-brand-green">
-                  {loadingOverview ? '...' : totalProperties}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-gray-text text-sm mb-2">Active Promos</p>
-                <p className="text-3xl font-bold text-gold">
-                  {loadingOverview ? '...' : activePromos}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-gray-text text-sm mb-2">FAQ Items</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  {loadingOverview ? '...' : totalFaqs}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* ===== SEMUA SECTION DI-RENDER TAPI DISEMBUNYIKAN ===== */}
-          <div style={{ display: activeTab === 'prices' ? 'block' : 'none' }}>
-            <ManagePricesSection />
-          </div>
-          <div style={{ display: activeTab === 'promos' ? 'block' : 'none' }}>
-            <ManagePromosSection />
-          </div>
-          <div style={{ display: activeTab === 'properties' ? 'block' : 'none' }}>
-            <ManagePropertiesSection />
-          </div>
-          <div style={{ display: activeTab === 'faq' ? 'block' : 'none' }}>
-            <ManageFAQSection />
-          </div>
-          <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <ManageAboutSection />
-          </div>
-          <div style={{ display: activeTab === 'appearance' ? 'block' : 'none' }}>
-            <ManageAppearanceSection />
-          </div>
-          <div style={{ display: activeTab === 'site' ? 'block' : 'none' }}>
-            <ManageSiteSection />
-          </div>
-          <div style={{ display: activeTab === 'home' ? 'block' : 'none' }}>
-            <ManageHomeSection />
-          </div>
-          <div style={{ display: activeTab === 'availability' ? 'block' : 'none' }}>
-            <ManageAvailabilitySection />
-          </div>
+          {/* ===== RENDER TAB CONTENT DENGAN LAZY LOADING ===== */}
+          {renderTabContent()}
         </div>
       </div>
     </div>

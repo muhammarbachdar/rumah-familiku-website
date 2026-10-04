@@ -106,7 +106,9 @@
     "title": "Tentang Kami",
     "description": "Rumah Familiku Syariah hadir untuk memberikan hunian yang nyaman, aman, dan sesuai nilai Islam bagi keluarga, rombongan, dan tamu yang menghargai privasi serta kenyamanan. Dari hotel hingga villa, kami menyediakan berbagai pilihan properti di Jakarta dan Surabaya.",
     "mission": "Misi Kami",
-    "values": "Nilai-Nilai Kami"
+    "values": "Nilai-Nilai Kami",
+    "ctaTitle": "Hubungi Kami",
+    "ctaDesc": "Hubungi kami untuk info lebih lanjut"
   },
   "faq": {
     "title": "Pertanyaan yang Sering Diajukan",

@@ -1,6 +1,8 @@
+// app/admin/dashboard/sections/ManageAppearance.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner'; // ✅ Tambahkan import
 
 export default function ManageAppearanceSection() {
   const [appearance, setAppearance] = useState({ 
@@ -10,6 +12,7 @@ export default function ManageAppearanceSection() {
   });
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => { 
     fetch('/api/admin/data?type=appearance')
@@ -17,17 +20,31 @@ export default function ManageAppearanceSection() {
       .then(data => { 
         if (data) setAppearance(data); 
         setLoading(false); 
-      }); 
+      })
+      .catch(err => {
+        console.error('Failed to load appearance:', err);
+        toast.error('Gagal memuat data appearance.');
+        setLoading(false);
+      });
   }, []);
 
-  const handleSave = async () => { 
-    await fetch('/api/admin/data?type=appearance', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(appearance) 
-    }); 
-    setSaved(true); 
-    setTimeout(() => setSaved(false), 2000); 
+  const handleSave = async () => {
+    setIsSubmitting(true);
+    try {
+      await fetch('/api/admin/data?type=appearance', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(appearance) 
+      });
+      setSaved(true);
+      toast.success('Appearance berhasil disimpan!');
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      toast.error('Gagal menyimpan appearance.');
+      console.error('Save appearance failed:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) return <div className="bg-white rounded-lg shadow p-6">Loading...</div>;
@@ -36,7 +53,6 @@ export default function ManageAppearanceSection() {
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-2xl font-bold mb-6">Manage Appearance</h2>
       
-      {/* Color Pickers */}
       <div className="space-y-4 mb-8">
         <div>
           <label className="block text-sm font-medium mb-1">Primary Color (Brand Green)</label>
@@ -91,14 +107,12 @@ export default function ManageAppearanceSection() {
         </div>
       </div>
 
-      {/* Preview Section - Real-time */}
       <div className="border-t pt-6 mb-6">
         <h3 className="text-lg font-bold mb-4">Preview Real-time</h3>
         <div 
           className="rounded-xl p-4 space-y-3 transition-colors duration-150"
           style={{ backgroundColor: appearance.backgroundColor }}
         >
-          {/* Mini Header Preview */}
           <div 
             className="flex items-center justify-between p-3 rounded-lg"
             style={{ backgroundColor: appearance.primaryColor }}
@@ -115,7 +129,6 @@ export default function ManageAppearanceSection() {
             </div>
           </div>
 
-          {/* Mini Property Card Preview */}
           <div className="bg-white rounded-lg shadow p-3">
             <div className="flex gap-3">
               <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
@@ -145,7 +158,6 @@ export default function ManageAppearanceSection() {
             </div>
           </div>
 
-          {/* Mini Button Preview */}
           <div className="flex gap-2 pt-2">
             <button 
               className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors"
@@ -167,7 +179,6 @@ export default function ManageAppearanceSection() {
             </button>
           </div>
 
-          {/* Mini Price Text Preview */}
           <div className="pt-2">
             <p className="text-sm font-semibold" style={{ color: appearance.accentColor }}>
               Harga Promo: Rp 450.000 <span className="text-gray-400 line-through text-xs ml-1">Rp 500.000</span>
@@ -182,10 +193,13 @@ export default function ManageAppearanceSection() {
 
       <button 
         onClick={handleSave} 
-        className="bg-brand-green text-white px-6 py-2 rounded-lg hover:bg-green-hover transition"
-        style={{ backgroundColor: appearance.primaryColor }}
+        disabled={isSubmitting}
+        className={`bg-brand-green text-white px-6 py-2 rounded-lg hover:bg-green-hover transition ${
+          isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+        style={{ backgroundColor: isSubmitting ? undefined : appearance.primaryColor }}
       >
-        {saved ? '✓ Saved!' : 'Save Changes'}
+        {isSubmitting ? 'Menyimpan...' : saved ? '✓ Saved!' : 'Save Changes'}
       </button>
     </div>
   );

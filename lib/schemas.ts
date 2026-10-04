@@ -28,9 +28,13 @@ export const PropertySchema = z.object({
   locationId: z.string().min(1, 'Lokasi (ID) wajib diisi'),
   locationEn: z.string().min(1, 'Lokasi (EN) wajib diisi'),
   mapsUrl: z.string().optional().nullable(),
+  // FIX: capacity dengan cross-validation min <= max
   capacity: z.object({
-    min: z.number().min(0),
-    max: z.number().min(1),
+    min: z.number().min(0, 'Kapasitas minimum minimal 0'),
+    max: z.number().min(1, 'Kapasitas maksimum minimal 1'),
+  }).refine(data => data.min <= data.max, {
+    message: 'Kapasitas minimum tidak boleh lebih besar dari kapasitas maksimum',
+    path: ['max'],
   }),
   pricing: z
     .object({
@@ -68,9 +72,7 @@ export const PropertySchema = z.object({
   notesEn: z.string().optional(),
   isGroupFriendly: z.boolean().optional(),
   minGroupSize: z.number().min(0).optional(),
-  // NEW: Room Types (hanya untuk hotel)
   roomTypes: z.array(RoomTypeSchema).optional(),
-  // Units (untuk kos, apartemen, rumah)
   units: z
     .array(
       z.object({
@@ -207,8 +209,8 @@ export const AvailabilityBookingSchema = z.object({
   action: z.enum(['addBooking', 'addBookingDates', 'deleteBooking', 'addUnit', 'deleteUnit']),
   propertyId: z.string().optional(),
   unitId: z.string().optional(),
-  roomTypeId: z.string().optional(), // NEW: untuk hotel
-  roomId: z.string().optional(), // NEW: untuk hotel
+  roomTypeId: z.string().optional(),
+  roomId: z.string().optional(),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal harus YYYY-MM-DD').optional(),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal harus YYYY-MM-DD').optional(),
   dates: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal harus YYYY-MM-DD')).optional(),

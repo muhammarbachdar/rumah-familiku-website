@@ -105,25 +105,26 @@ export function groupConsecutiveDates(dates: string[]): { startDate: string; end
   const result: { startDate: string; endDate: string }[] = [];
 
   let currentStart = sortedDates[0];
-  let currentEnd = normalizeDate(new Date(sortedDates[0]));
-  const endDateObj = new Date(currentEnd);
+  // FIX: pakai parseDate untuk konsistensi
+  let currentEnd = normalizeDate(parseDate(sortedDates[0]));
+  const endDateObj = parseDate(currentEnd);
   endDateObj.setDate(endDateObj.getDate() + 1);
-  currentEnd = endDateObj.toISOString().split('T')[0];
+  currentEnd = normalizeDate(endDateObj);
 
   for (let i = 1; i < sortedDates.length; i++) {
     const prevDate = normalizeDate(sortedDates[i - 1]);
     const currDate = normalizeDate(sortedDates[i]);
 
     // Cek apakah berurutan (selisih 1 hari)
-    const prev = new Date(prevDate);
-    const curr = new Date(currDate);
+    const prev = parseDate(prevDate);
+    const curr = parseDate(currDate);
     const diffDays = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
 
     if (diffDays === 1) {
       // Masih dalam range yang sama, update endDate
-      const endObj = new Date(currDate);
+      const endObj = parseDate(currDate);
       endObj.setDate(endObj.getDate() + 1);
-      currentEnd = endObj.toISOString().split('T')[0];
+      currentEnd = normalizeDate(endObj);
     } else {
       // Range putus, simpan range sebelumnya
       result.push({
@@ -132,9 +133,9 @@ export function groupConsecutiveDates(dates: string[]): { startDate: string; end
       });
       // Mulai range baru
       currentStart = sortedDates[i];
-      const endObj = new Date(sortedDates[i]);
+      const endObj = parseDate(sortedDates[i]);
       endObj.setDate(endObj.getDate() + 1);
-      currentEnd = endObj.toISOString().split('T')[0];
+      currentEnd = normalizeDate(endObj);
     }
   }
 
@@ -152,7 +153,7 @@ export function groupConsecutiveDates(dates: string[]): { startDate: string; end
  * Menggunakan date-fns untuk konsistensi
  */
 export function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
+  const date = parseDate(dateStr);
   return date.toLocaleDateString('id-ID', {
     day: 'numeric',
     month: 'long',
@@ -164,8 +165,7 @@ export function formatDate(dateStr: string): string {
  * Hitung jumlah malam dari startDate ke endDate (eksklusif)
  */
 export function getNights(startDate: string, endDate: string): number {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 }
-

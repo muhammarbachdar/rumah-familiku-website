@@ -1,8 +1,10 @@
+// app/admin/dashboard/sections/ManageFAQ.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner'; // ✅ Tambahkan import
 
-// ==================== ModalForm Component (dipindahkan ke luar) ====================
+// ==================== ModalForm Component ====================
 interface ModalFormProps {
   form: {
     id: string;
@@ -17,10 +19,10 @@ interface ModalFormProps {
   onSave: () => void;
   onClose: () => void;
   title: string;
+  isSubmitting?: boolean; // ✅ TAMBAHKAN
 }
 
-function ModalForm({ form, setForm, onSave, onClose, title }: ModalFormProps) {
-  // Mapping kategori ID ke EN
+function ModalForm({ form, setForm, onSave, onClose, title, isSubmitting = false }: ModalFormProps) {
   const categoryMapping: Record<string, string> = {
     'Umum': 'General',
     'Booking': 'Booking',
@@ -28,7 +30,6 @@ function ModalForm({ form, setForm, onSave, onClose, title }: ModalFormProps) {
     'Peraturan': 'Rules'
   };
 
-  // Pilihan dropdown untuk kategori EN
   const categoryEnOptions = [
     { value: 'General', label: 'General' },
     { value: 'Booking', label: 'Booking' },
@@ -112,8 +113,24 @@ function ModalForm({ form, setForm, onSave, onClose, title }: ModalFormProps) {
           </div>
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition font-medium">Simpan</button>
-          <button onClick={onClose} className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">Batal</button>
+          <button 
+            onClick={onSave} 
+            disabled={isSubmitting}
+            className={`flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition font-medium ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isSubmitting ? 'Menyimpan...' : 'Simpan'}
+          </button>
+          <button 
+            onClick={onClose} 
+            disabled={isSubmitting}
+            className={`flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            Batal
+          </button>
         </div>
       </div>
     </div>
@@ -126,6 +143,8 @@ export default function ManageFAQSection() {
   const [loading, setLoading] = useState(true);
   const [editingFaq, setEditingFaq] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  // ✅ TAMBAHKAN: isSubmitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     id: '',
     categoryId: '',
@@ -137,6 +156,7 @@ export default function ManageFAQSection() {
   });
 
   useEffect(() => { loadData(); }, []);
+  
   const loadData = async () => {
     setLoading(true);
     try {
@@ -163,12 +183,24 @@ export default function ManageFAQSection() {
     setForm({ ...faq });
   };
 
+  // ✅ TAMBAHKAN: handleSaveEdit dengan isSubmitting
   const handleSaveEdit = async () => {
-    const updated = faqs.map(f => f.id === editingFaq.id ? form : f);
-    setFaqs(updated);
-    await saveToAPI(updated);
-    await loadData();
-    setEditingFaq(null);
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const updated = faqs.map(f => f.id === editingFaq.id ? form : f);
+      setFaqs(updated);
+      await saveToAPI(updated);
+      await loadData();
+      setEditingFaq(null);
+      toast.success('FAQ berhasil diperbarui!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menyimpan FAQ.');
+      console.error('Save FAQ failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAdd = () => {
@@ -184,12 +216,24 @@ export default function ManageFAQSection() {
     setShowAddModal(true);
   };
 
+  // ✅ TAMBAHKAN: handleSaveAdd dengan isSubmitting
   const handleSaveAdd = async () => {
-    const newFaqs = [...faqs, form];
-    setFaqs(newFaqs);
-    await saveToAPI(newFaqs);
-    await loadData();
-    setShowAddModal(false);
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const newFaqs = [...faqs, form];
+      setFaqs(newFaqs);
+      await saveToAPI(newFaqs);
+      await loadData();
+      setShowAddModal(false);
+      toast.success('FAQ berhasil ditambahkan!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menambahkan FAQ.');
+      console.error('Add FAQ failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -232,6 +276,7 @@ export default function ManageFAQSection() {
           onSave={handleSaveEdit}
           onClose={() => setEditingFaq(null)}
           title="Edit FAQ"
+          isSubmitting={isSubmitting}
         />
       )}
       {showAddModal && (
@@ -241,6 +286,7 @@ export default function ManageFAQSection() {
           onSave={handleSaveAdd}
           onClose={() => setShowAddModal(false)}
           title="Tambah FAQ Baru"
+          isSubmitting={isSubmitting}
         />
       )}
     </div>

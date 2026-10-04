@@ -1,10 +1,10 @@
-// ./app/admin/dashboard/sections/ManagePromos.tsx
-
+// app/admin/dashboard/sections/ManagePromos.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner'; // ✅ Tambahkan import
 
-// ===== PINDAHKAN ModalForm KE LUAR =====
+// ===== ModalForm Props Interface =====
 interface ModalFormProps {
   onSave: () => void;
   onClose: () => void;
@@ -23,6 +23,7 @@ interface ModalFormProps {
   setForm: React.Dispatch<React.SetStateAction<any>>;
   properties: any[];
   handlePropertyToggle: (propertyId: string) => void;
+  isSubmitting?: boolean; // ✅ TAMBAHKAN
 }
 
 const ModalForm = ({ 
@@ -32,7 +33,8 @@ const ModalForm = ({
   form, 
   setForm, 
   properties,
-  handlePropertyToggle 
+  handlePropertyToggle,
+  isSubmitting = false, // ✅ TAMBAHKAN
 }: ModalFormProps) => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -117,10 +119,22 @@ const ModalForm = ({
         </div>
       </div>
       <div className="flex gap-3 mt-6">
-        <button onClick={onSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg">
-          Simpan
+        <button 
+          onClick={onSave} 
+          disabled={isSubmitting}
+          className={`flex-1 bg-brand-green text-white py-2 rounded-lg ${
+            isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-hover transition'
+          }`}
+        >
+          {isSubmitting ? 'Menyimpan...' : 'Simpan'}
         </button>
-        <button onClick={onClose} className="flex-1 border py-2 rounded-lg">
+        <button 
+          onClick={onClose} 
+          disabled={isSubmitting}
+          className={`flex-1 border py-2 rounded-lg ${
+            isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 transition'
+          }`}
+        >
           Batal
         </button>
       </div>
@@ -135,6 +149,8 @@ export default function ManagePromosSection() {
   const [loading, setLoading] = useState(true);
   const [editingPromo, setEditingPromo] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  // ✅ TAMBAHKAN: isSubmitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ 
     id: '', titleId: '', titleEn: '', 
     descriptionId: '', descriptionEn: '', 
@@ -171,12 +187,24 @@ export default function ManagePromosSection() {
     }); 
   };
   
+  // ✅ TAMBAHKAN: handleSaveEdit dengan isSubmitting
   const handleSaveEdit = async () => { 
-    const updated = promos.map(p => p.id === editingPromo.id ? form : p); 
-    setPromos(updated); 
-    await saveToAPI(updated); 
-    await loadData();
-    setEditingPromo(null); 
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const updated = promos.map(p => p.id === editingPromo.id ? form : p); 
+      setPromos(updated); 
+      await saveToAPI(updated); 
+      await loadData();
+      setEditingPromo(null);
+      toast.success('Promo berhasil diperbarui!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menyimpan promo.');
+      console.error('Save promo failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const handleAdd = () => { 
@@ -188,12 +216,24 @@ export default function ManagePromosSection() {
     setShowAddModal(true); 
   };
   
+  // ✅ TAMBAHKAN: handleSaveAdd dengan isSubmitting
   const handleSaveAdd = async () => { 
-    const newPromos = [...promos, form]; 
-    setPromos(newPromos); 
-    await saveToAPI(newPromos); 
-    await loadData();
-    setShowAddModal(false); 
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const newPromos = [...promos, form]; 
+      setPromos(newPromos); 
+      await saveToAPI(newPromos); 
+      await loadData();
+      setShowAddModal(false);
+      toast.success('Promo berhasil ditambahkan!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menambahkan promo.');
+      console.error('Add promo failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const handleDelete = async (id: string) => { 
@@ -258,7 +298,6 @@ export default function ManagePromosSection() {
         </table>
       </div>
       
-      {/* ===== SEKARANG ModalForm sudah di luar, tidak dibuat ulang setiap render ===== */}
       {editingPromo && (
         <ModalForm 
           onSave={handleSaveEdit} 
@@ -268,6 +307,7 @@ export default function ManagePromosSection() {
           setForm={setForm}
           properties={properties}
           handlePropertyToggle={handlePropertyToggle}
+          isSubmitting={isSubmitting}
         />
       )}
       {showAddModal && (
@@ -279,6 +319,7 @@ export default function ManagePromosSection() {
           setForm={setForm}
           properties={properties}
           handlePropertyToggle={handlePropertyToggle}
+          isSubmitting={isSubmitting}
         />
       )}
     </div>

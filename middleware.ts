@@ -1,6 +1,7 @@
 // middleware.ts
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
+import { verifySessionToken } from './lib/auth/session';
 
 const intlMiddleware = createMiddleware({
   locales: ['id', 'en'],
@@ -9,7 +10,7 @@ const intlMiddleware = createMiddleware({
 
 const SESSION_COOKIE_NAME = 'rumah-familiku-admin-session';
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Semua path /admin/* (termasuk /admin sendiri) di luar locale system
@@ -17,7 +18,8 @@ export default function middleware(request: NextRequest) {
     // Proteksi khusus untuk /admin/dashboard
     if (pathname.startsWith('/admin/dashboard')) {
       const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
-      if (!sessionCookie?.value) {
+      const username = await verifySessionToken(sessionCookie?.value);
+      if (!username) {
         return NextResponse.redirect(new URL('/admin', request.url));
       }
     }

@@ -10,6 +10,7 @@ import { formatPrice } from '@/lib/utils/whatsapp';
 import Link from 'next/link';
 
 export default function PropertyPricingPage() {
+  // ✅ Client Component: pakai useLocale() (hook), bukan await getLocale()
   const t = useTranslations();
   const locale = useLocale();
   const params = useParams();

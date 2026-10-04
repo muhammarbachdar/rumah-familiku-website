@@ -1,42 +1,17 @@
 // app/[locale]/about/page.tsx
-'use client';
-
-import { useTranslations, useLocale } from 'next-intl';
-import { useState, useEffect } from 'react';
+import { getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { fetchAbout } from '@/lib/api';
+import { getAbout } from '@/lib/data/content';
 import { getWhatsAppURL } from '@/lib/utils/whatsapp';
 
-export default function AboutPage() {
-  const t = useTranslations();
-  const locale = useLocale();
-  const [content, setContent] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAbout()
-      .then(data => {
-        setContent(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load about data:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-gray-text">{t('common.loading')}</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+export default async function AboutPage() {
+  const t = await getTranslations();
+  const locale = await getLocale();
+  
+  // Fetch data langsung di server
+  const content = await getAbout().catch(() => null);
 
   // Fallback jika content kosong
   const mission = content?.mission || t('about.mission');
@@ -102,7 +77,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Why Choose Us - dinamis dari API */}
+        {/* Why Choose Us */}
         <section className="py-12 md:py-20 bg-cream">
           <div className="container mx-auto px-4">
             <h2 className="font-serif text-3xl font-bold text-center text-charcoal mb-12">

@@ -106,7 +106,9 @@
     "title": "About Us",
     "description": "Rumah Familiku Syariah was founded to offer comfortable, safe, and Islamic-compliant accommodations for families, groups, and guests who value privacy and comfort. From hotels to villas, we offer a variety of properties across Jakarta and Surabaya.",
     "mission": "Our Mission",
-    "values": "Our Values"
+    "values": "Our Values",
+    "ctaTitle": "Contact Us",
+    "ctaDesc": "Contact us for more information"
   },
   "faq": {
     "title": "Frequently Asked Questions",

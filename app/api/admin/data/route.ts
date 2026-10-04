@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/prisma';
 import { createId } from '@paralleldrive/cuid2';
 import { Booking } from '@/lib/types';
+import { getAvailabilityForProperty, getAllAvailability, toBookingShape } from '@/lib/data/availability';
 import { getAdminSession } from '@/lib/auth/admin';
 import {
   generateBookingId,
@@ -26,7 +27,6 @@ import {
 import { z, ZodError } from 'zod';
 
 // ============ HELPERS: SERIALIZE PROPERTY (Prisma row -> JSON shape lama) ============
-
 
 function serializeProperty(p: any) {
   // Serialize roomTypes for hotel
@@ -94,117 +94,30 @@ function serializeProperty(p: any) {
   };
 }
 
-// ============ HELPERS: SERIALIZE AVAILABILITY ============
-
-async function serializeAvailabilityForProperty(propertyId: string) {
-  const { rows: propertyRows } = await pool.query('SELECT * FROM "Property" WHERE id = $1', [propertyId]);
-  const propertyBase = propertyRows[0];
-  if (!propertyBase) return null;
-
-  const { rows: units } = await pool.query('SELECT * FROM "PropertyUnit" WHERE "propertyId" = $1', [propertyId]);
-  const { rows: roomTypes } = await pool.query('SELECT * FROM "RoomType" WHERE "propertyId" = $1', [propertyId]);
-  const roomTypeIds = roomTypes.map((rt: any) => rt.id);
-  const { rows: rooms } = roomTypeIds.length
-    ? await pool.query('SELECT * FROM "Room" WHERE "roomTypeId" = ANY($1)', [roomTypeIds])
-    : { rows: [] };
-  const roomIds = rooms.map((r: any) => r.id);
-  const unitIds = units.map((u: any) => u.id);
-
-  const { rows: unitBookings } = unitIds.length
-    ? await pool.query('SELECT * FROM "Booking" WHERE "unitId" = ANY($1)', [unitIds])
-    : { rows: [] };
-  const { rows: roomBookings } = roomIds.length
-    ? await pool.query('SELECT * FROM "Booking" WHERE "roomId" = ANY($1)', [roomIds])
-    : { rows: [] };
-  const { rows: propertyBookings } = await pool.query(
-    'SELECT * FROM "Booking" WHERE "propertyId" = $1 AND "unitId" IS NULL AND "roomId" IS NULL',
-    [propertyId]
-  );
-
-  const bookingsByUnit: Record<string, any[]> = {};
-  for (const b of unitBookings) {
-    if (!bookingsByUnit[b.unitId]) bookingsByUnit[b.unitId] = [];
-    bookingsByUnit[b.unitId].push(b);
-  }
-  const bookingsByRoom: Record<string, any[]> = {};
-  for (const b of roomBookings) {
-    if (!bookingsByRoom[b.roomId]) bookingsByRoom[b.roomId] = [];
-    bookingsByRoom[b.roomId].push(b);
-  }
-  const roomsByRoomType: Record<string, any[]> = {};
-  for (const r of rooms) {
-    if (!roomsByRoomType[r.roomTypeId]) roomsByRoomType[r.roomTypeId] = [];
-    roomsByRoomType[r.roomTypeId].push({ ...r, bookings: bookingsByRoom[r.id] || [] });
-  }
-
-  const property = {
-    ...propertyBase,
-    units: units.map((u: any) => ({ ...u, bookings: bookingsByUnit[u.id] || [] })),
-    roomTypes: roomTypes.map((rt: any) => ({ ...rt, rooms: roomsByRoomType[rt.id] || [] })),
-    bookings: propertyBookings,
-  };
-  if (!property) return null;
-
-  const mode = getAvailabilityMode(property.type);
-
-  if (mode === 'property') {
-    return {
-      mode: 'property' as const,
-      bookings: property.bookings.map(toBookingShape),
-    };
-  }
-
-  if (property.type === 'kos') {
-    // Kos: flat units
-    return {
-      mode: 'unit' as const,
-      units: property.units.map((u: any) => ({
-        unitId: u.unitId,
-        unitName: u.unitName,
-        bookings: u.bookings.map(toBookingShape),
-      })),
-    };
-  }
-
-  if (property.type === 'hotel') {
-    // Hotel: roomTypes with nested rooms
-    return {
-      mode: 'unit' as const,
-      roomTypes: property.roomTypes.map((rt: any) => ({
-        roomTypeId: rt.roomTypeId,
-        roomTypeName: rt.nameId,
-        priceWeekday: rt.priceWeekday,
-        priceWeekend: rt.priceWeekend,
-        capacity: rt.capacity,
-        images: rt.images,
-        rooms: rt.rooms.map((r: any) => ({
-          roomId: r.roomId,
-          roomNumber: r.roomNumber,
-          bookings: r.bookings.map(toBookingShape),
-        })),
-      })),
-    };
-  }
-
-  // Apartemen/Rumah: fallback
-  return {
-    mode: 'unit' as const,
-    units: property.units.map((u: any) => ({
-      unitId: u.unitId,
-      unitName: u.unitName,
-      bookings: u.bookings.map(toBookingShape),
-    })),
-  };
-}
-
-function toBookingShape(b: any): Booking {
-  return { id: b.id, startDate: b.startDate, endDate: b.endDate, note: b.note ?? '' };
-}
 
 // ============ HELPERS: READ DATA PER TYPE ============
 
-async function getProperties() {
-  const { rows: properties } = await pool.query('SELECT * FROM "Property" ORDER BY "createdAt" ASC');
+async function getProperties(page?: number, limit?: number) {
+  // Build query dengan pagination
+  const offset = page && limit ? (page - 1) * limit : 0;
+  const limitClause = limit ? `LIMIT ${limit}` : '';
+  const offsetClause = page && limit ? `OFFSET ${offset}` : '';
+
+  // Query utama dengan pagination
+  const query = `
+    SELECT * FROM "Property" 
+    ORDER BY "createdAt" ASC 
+    ${limitClause} 
+    ${offsetClause}
+  `;
+  
+  const { rows: properties } = await pool.query(query);
+  
+  // Ambil total count untuk pagination
+  const { rows: countRows } = await pool.query('SELECT COUNT(*) FROM "Property"');
+  const total = parseInt(countRows[0].count, 10);
+
+  // Ambil data relasi (units, roomTypes, rooms) - tetap semua karena relatif kecil
   const { rows: units } = await pool.query('SELECT * FROM "PropertyUnit"');
   const { rows: roomTypes } = await pool.query('SELECT * FROM "RoomType"');
   const { rows: rooms } = await pool.query('SELECT * FROM "Room"');
@@ -236,7 +149,15 @@ async function getProperties() {
     roomTypes: roomTypesByProperty[p.id] || [],
   }));
 
-  return assembled.map(serializeProperty);
+  return {
+    data: assembled.map(serializeProperty),
+    pagination: {
+      page: page || 1,
+      limit: limit || 20,
+      total,
+      totalPages: Math.ceil(total / (limit || 20)),
+    },
+  };
 }
 
 // ============ HELPERS: VERSION CHECK ============
@@ -351,23 +272,21 @@ export async function GET(request: NextRequest) {
 
   try {
     if (type === 'availability') {
-      const propertyId = searchParams.get('propertyId');
-      if (propertyId) {
-        const avail = await serializeAvailabilityForProperty(propertyId);
-        return NextResponse.json(avail);
-      }
-      const { rows: properties } = await pool.query('SELECT id FROM "Property"');
-      const result: Record<string, any> = {};
-      for (const p of properties) {
-        const avail = await serializeAvailabilityForProperty(p.id);
-        if (avail) result[p.id] = avail;
-      }
-      return NextResponse.json(result);
-    }
+     const propertyId = searchParams.get('propertyId');
+     if (propertyId) {
+       const avail = await getAvailabilityForProperty(propertyId);
+       return NextResponse.json(avail);
+     }
+     return NextResponse.json(await getAllAvailability());
+   }
 
     switch (type) {
-      case 'properties':
-        return NextResponse.json(await getProperties());
+      case 'properties': {
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '20');
+        const result = await getProperties(page, limit);
+        return NextResponse.json(result);
+      }
       case 'promos': {
         const { rows: promos } = await pool.query('SELECT * FROM "Promo" ORDER BY "createdAt" ASC');
         const { rows: links } = await pool.query('SELECT "promoId", "propertyId" FROM "PromoProperty"');
@@ -492,13 +411,19 @@ export async function POST(request: NextRequest) {
       return await handleDeleteProperty(body.id);
     }
 
+    // ===== REDIRECT PROPERTIES TO NEW ENDPOINT =====
+    if (type === 'properties') {
+      // Redirect ke endpoint baru untuk single property operations
+      return NextResponse.redirect(
+        new URL('/api/admin/properties', request.url),
+        307 // Temporary Redirect - maintain method POST
+      );
+    }
+
     // ===== VALIDATE & PROCESS OTHER TYPES =====
     let validatedBody;
     try {
       switch (type) {
-        case 'properties':
-          validatedBody = PropertySchema.array().parse(body);
-          break;
         case 'promos':
           validatedBody = PromoSchema.array().parse(body);
           break;
@@ -531,264 +456,6 @@ export async function POST(request: NextRequest) {
     }
 
     switch (type) {
-      case 'properties': {
-        const props = validatedBody as z.infer<typeof PropertySchema>[];
-        const client = await pool.connect();
-        try {
-          await client.query('BEGIN');
-          for (const prop of props) {
-            const propertyId = prop.id || createId();
-            const slug = prop.slug || prop.nameId.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-            // --- cek perubahan type, bersihkan data lama kalau type berubah ---
-            const { rows: existingPropRows } = await client.query(
-              'SELECT * FROM "Property" WHERE id = $1',
-              [propertyId]
-            );
-            const existingProp = existingPropRows[0];
-            if (existingProp && existingProp.type !== prop.type) {
-              if (prop.type === 'hotel' && existingProp.type !== 'hotel') {
-                await client.query('DELETE FROM "PropertyUnit" WHERE "propertyId" = $1', [propertyId]);
-              }
-              if (prop.type !== 'hotel' && existingProp.type === 'hotel') {
-                await client.query('DELETE FROM "RoomType" WHERE "propertyId" = $1', [propertyId]);
-              }
-            }
-
-            // --- cek optimistic lock ---
-            if (prop.id) {
-              const { rows } = await client.query(
-                'SELECT version FROM "Property" WHERE id = $1',
-                [prop.id]
-              );
-              const existing = rows[0];
-              if (existing && existing.version !== prop.version) {
-                throw new Error(`Properti "${prop.nameId}" telah diubah oleh admin lain. Silakan refresh dan coba lagi.`);
-              }
-            }
-
-            // --- siapkan data dasar property ---
-            const basePropertyData: any = {
-              slug,
-              nameId: prop.nameId,
-              nameEn: prop.nameEn,
-              type: prop.type,
-              locationId: prop.locationId,
-              locationEn: prop.locationEn,
-              mapsUrl: prop.mapsUrl || null,
-              capacityMin: prop.capacity?.min || 0,
-              capacityMax: prop.capacity?.max || 1,
-              extraChargeAmount: prop.extraCharge?.amount ?? null,
-              extraChargeUnit: prop.extraCharge?.unit ?? null,
-              deposit: prop.deposit ?? null,
-              description: prop.description,
-              descriptionEn: prop.descriptionEn,
-              image: prop.image,
-              images: prop.images || [],
-              imagesCategorized: prop.imagesCategorized || [],
-              facilities: prop.facilities || [],
-              rules: prop.rules || [],
-              rulesEn: prop.rulesEn || [],
-              notes: prop.notes ?? null,
-              notesEn: prop.notesEn ?? null,
-              isGroupFriendly: prop.isGroupFriendly || false,
-              minGroupSize: prop.minGroupSize ?? null,
-            };
-            if (prop.type === 'kos') {
-              basePropertyData.pricingWeekday = null;
-              basePropertyData.pricingWeekend = null;
-              basePropertyData.pricingMode = prop.pricingMode ?? null;
-              basePropertyData.monthlyPrice = prop.monthlyPrice ?? null;
-              basePropertyData.monthlyPricingWNI = prop.monthlyPricingWNI ?? null;
-              basePropertyData.monthlyPricingWNA = prop.monthlyPricingWNA ?? null;
-            } else {
-              basePropertyData.pricingWeekday = prop.pricing?.weekday ?? null;
-              basePropertyData.pricingWeekend = prop.pricing?.weekend ?? null;
-              basePropertyData.pricingMode = null;
-              basePropertyData.monthlyPrice = null;
-              basePropertyData.monthlyPricingWNI = null;
-              basePropertyData.monthlyPricingWNA = null;
-            }
-
-            // --- upsert property ---
-            await client.query(
-              `INSERT INTO "Property"
-                 (id, slug, "nameId", "nameEn", type, "locationId", "locationEn", "mapsUrl",
-                  "capacityMin", "capacityMax", "pricingWeekday", "pricingWeekend", "pricingMode",
-                  "monthlyPrice", "monthlyPricingWNI", "monthlyPricingWNA",
-                  "extraChargeAmount", "extraChargeUnit", deposit, description, "descriptionEn",
-                  image, images, "imagesCategorized", facilities, rules, "rulesEn", notes, "notesEn",
-                  "isGroupFriendly", "minGroupSize", version, "createdAt", "updatedAt")
-               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,
-                       $22,$23,$24,$25,$26,$27,$28,$29,$30,$31,1,NOW(),NOW())
-               ON CONFLICT (id) DO UPDATE SET
-                 slug = EXCLUDED.slug, "nameId" = EXCLUDED."nameId", "nameEn" = EXCLUDED."nameEn",
-                 type = EXCLUDED.type, "locationId" = EXCLUDED."locationId", "locationEn" = EXCLUDED."locationEn",
-                 "mapsUrl" = EXCLUDED."mapsUrl", "capacityMin" = EXCLUDED."capacityMin",
-                 "capacityMax" = EXCLUDED."capacityMax", "pricingWeekday" = EXCLUDED."pricingWeekday",
-                 "pricingWeekend" = EXCLUDED."pricingWeekend", "pricingMode" = EXCLUDED."pricingMode",
-                 "monthlyPrice" = EXCLUDED."monthlyPrice", "monthlyPricingWNI" = EXCLUDED."monthlyPricingWNI",
-                 "monthlyPricingWNA" = EXCLUDED."monthlyPricingWNA", "extraChargeAmount" = EXCLUDED."extraChargeAmount",
-                 "extraChargeUnit" = EXCLUDED."extraChargeUnit", deposit = EXCLUDED.deposit,
-                 description = EXCLUDED.description, "descriptionEn" = EXCLUDED."descriptionEn",
-                 image = EXCLUDED.image, images = EXCLUDED.images, "imagesCategorized" = EXCLUDED."imagesCategorized", facilities = EXCLUDED.facilities,
-                 rules = EXCLUDED.rules, "rulesEn" = EXCLUDED."rulesEn", notes = EXCLUDED.notes,
-                 "notesEn" = EXCLUDED."notesEn", "isGroupFriendly" = EXCLUDED."isGroupFriendly",
-                 "minGroupSize" = EXCLUDED."minGroupSize", version = "Property".version + 1,
-                 "updatedAt" = NOW()`,
-              [
-                propertyId, slug, basePropertyData.nameId, basePropertyData.nameEn, basePropertyData.type,
-                basePropertyData.locationId, basePropertyData.locationEn, basePropertyData.mapsUrl,
-                basePropertyData.capacityMin, basePropertyData.capacityMax, basePropertyData.pricingWeekday,
-                basePropertyData.pricingWeekend, basePropertyData.pricingMode, basePropertyData.monthlyPrice,
-                basePropertyData.monthlyPricingWNI, basePropertyData.monthlyPricingWNA,
-                basePropertyData.extraChargeAmount, basePropertyData.extraChargeUnit, basePropertyData.deposit,
-                basePropertyData.description, basePropertyData.descriptionEn, basePropertyData.image,
-                basePropertyData.images, JSON.stringify(basePropertyData.imagesCategorized), JSON.stringify(basePropertyData.facilities), basePropertyData.rules,
-                basePropertyData.rulesEn, basePropertyData.notes, basePropertyData.notesEn,
-                basePropertyData.isGroupFriendly, basePropertyData.minGroupSize,
-              ]
-            );
-
-            // --- handling units (non-hotel) ---
-            if (prop.type !== 'hotel' && prop.units) {
-              const { rows: existingUnits } = await client.query(
-                'SELECT "unitId" FROM "PropertyUnit" WHERE "propertyId" = $1',
-                [propertyId]
-              );
-              const existingUnitIds = existingUnits.map((u: any) => u.unitId);
-              const requestUnitIds = prop.units.map((u: any) => u.unitId).filter(Boolean);
-              const unitIdsToDelete = existingUnitIds.filter(
-                (id: string) => !requestUnitIds.includes(id)
-              );
-              if (unitIdsToDelete.length > 0) {
-                const { rows: countRows } = await client.query(
-                  'SELECT COUNT(*) FROM "Booking" WHERE "unitId" IN (SELECT id FROM "PropertyUnit" WHERE "unitId" = ANY($1))',
-                  [unitIdsToDelete]
-                );
-                const bookingsOnUnits = parseInt(countRows[0].count, 10);
-                if (bookingsOnUnits > 0) {
-                  throw new Error(
-                    `Tidak dapat menghapus unit karena masih ada ${bookingsOnUnits} booking terkait. Hapus booking terlebih dahulu.`
-                  );
-                }
-                await client.query(
-                  'DELETE FROM "PropertyUnit" WHERE "unitId" = ANY($1) AND "propertyId" = $2',
-                  [unitIdsToDelete, propertyId]
-                );
-              }
-              for (const unit of prop.units) {
-                const unitId = unit.unitId || generateUnitId();
-                await client.query(
-                  `INSERT INTO "PropertyUnit" (id, "unitId", "unitName", "propertyId", "createdAt", "updatedAt")
-                   VALUES ($1,$2,$3,$4,NOW(),NOW())
-                   ON CONFLICT ("unitId") DO UPDATE SET "unitName" = EXCLUDED."unitName", "propertyId" = EXCLUDED."propertyId", "updatedAt" = NOW()`,
-                  [createId(), unitId, unit.unitName, propertyId]
-                );
-              }
-            }
-
-            // --- handling roomTypes + rooms (hotel) ---
-            if (prop.type === 'hotel' && prop.roomTypes) {
-              const { rows: existingRoomTypes } = await client.query(
-                'SELECT id, "roomTypeId" FROM "RoomType" WHERE "propertyId" = $1',
-                [propertyId]
-              );
-              const existingRoomTypeIds = existingRoomTypes.map((rt: any) => rt.roomTypeId);
-              const requestRoomTypeIds = prop.roomTypes.map((rt: any) => rt.id).filter(Boolean);
-              const roomTypeIdsToDelete = existingRoomTypeIds.filter(
-                (id: string) => !requestRoomTypeIds.includes(id)
-              );
-              if (roomTypeIdsToDelete.length > 0) {
-                const { rows: roomsToDelete } = await client.query(
-                  'SELECT id FROM "Room" WHERE "roomTypeId" IN (SELECT id FROM "RoomType" WHERE "roomTypeId" = ANY($1))',
-                  [roomTypeIdsToDelete]
-                );
-                const roomIdsToCheck = roomsToDelete.map((r: any) => r.id);
-                if (roomIdsToCheck.length > 0) {
-                  const { rows: countRows } = await client.query(
-                    'SELECT COUNT(*) FROM "Booking" WHERE "roomId" = ANY($1)',
-                    [roomIdsToCheck]
-                  );
-                  const bookingsOnRooms = parseInt(countRows[0].count, 10);
-                  if (bookingsOnRooms > 0) {
-                    throw new Error(
-                      `Tidak dapat menghapus tipe kamar karena masih ada ${bookingsOnRooms} booking terkait. Hapus booking terlebih dahulu.`
-                    );
-                  }
-                }
-                await client.query(
-                  'DELETE FROM "RoomType" WHERE "roomTypeId" = ANY($1) AND "propertyId" = $2',
-                  [roomTypeIdsToDelete, propertyId]
-                );
-              }
-              for (const rt of prop.roomTypes) {
-                const roomTypeId = rt.id || `rt-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-                const { rows: roomTypeRows } = await client.query(
-                  `INSERT INTO "RoomType"
-                     (id, "roomTypeId", "nameId", "nameEn", capacity, "priceWeekday", "priceWeekend", images, "propertyId", "createdAt", "updatedAt")
-                   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW(),NOW())
-                   ON CONFLICT ("roomTypeId") DO UPDATE SET
-                     "nameId" = EXCLUDED."nameId", "nameEn" = EXCLUDED."nameEn", capacity = EXCLUDED.capacity,
-                     "priceWeekday" = EXCLUDED."priceWeekday", "priceWeekend" = EXCLUDED."priceWeekend",
-                     images = EXCLUDED.images, "propertyId" = EXCLUDED."propertyId", "updatedAt" = NOW()
-                   RETURNING id`,
-                  [
-                    createId(), roomTypeId, rt.nameId, rt.nameEn, rt.capacity || 2,
-                    rt.priceWeekday || 0, rt.priceWeekend || 0, rt.images || [], propertyId,
-                  ]
-                );
-                const roomTypeDbId = roomTypeRows[0].id;
-
-                if (rt.rooms) {
-                  const { rows: existingRooms } = await client.query(
-                    'SELECT "roomId" FROM "Room" WHERE "roomTypeId" = $1',
-                    [roomTypeDbId]
-                  );
-                  const existingRoomIds = existingRooms.map((r: any) => r.roomId);
-                  const requestRoomIds = rt.rooms.map((r: any) => r.id).filter(Boolean);
-                  const roomIdsToDelete = existingRoomIds.filter(
-                    (id: string) => !requestRoomIds.includes(id)
-                  );
-                  if (roomIdsToDelete.length > 0) {
-                    const { rows: countRows } = await client.query(
-                      'SELECT COUNT(*) FROM "Booking" WHERE "roomId" IN (SELECT id FROM "Room" WHERE "roomId" = ANY($1))',
-                      [roomIdsToDelete]
-                    );
-                    const bookingsOnRooms = parseInt(countRows[0].count, 10);
-                    if (bookingsOnRooms > 0) {
-                      throw new Error(
-                        `Tidak dapat menghapus kamar karena masih ada ${bookingsOnRooms} booking terkait. Hapus booking terlebih dahulu.`
-                      );
-                    }
-                    await client.query(
-                      'DELETE FROM "Room" WHERE "roomId" = ANY($1) AND "roomTypeId" = $2',
-                      [roomIdsToDelete, roomTypeDbId]
-                    );
-                  }
-                  for (const room of rt.rooms) {
-                    const roomId = room.id || `room-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-                    await client.query(
-                      `INSERT INTO "Room" (id, "roomId", "roomNumber", "roomTypeId", "createdAt", "updatedAt")
-                       VALUES ($1,$2,$3,$4,NOW(),NOW())
-                       ON CONFLICT ("roomId") DO UPDATE SET "roomNumber" = EXCLUDED."roomNumber", "roomTypeId" = EXCLUDED."roomTypeId", "updatedAt" = NOW()`,
-                      [createId(), roomId, room.roomNumber || '001', roomTypeDbId]
-                    );
-                  }
-                }
-              }
-            }
-          }
-          await client.query('COMMIT');
-        } catch (err) {
-          await client.query('ROLLBACK');
-          throw err;
-        } finally {
-          client.release();
-        }
-        return NextResponse.json({ success: true });
-      }
-
       case 'promos': {
         const promos = validatedBody as z.infer<typeof PromoSchema>[];
         const client = await pool.connect();

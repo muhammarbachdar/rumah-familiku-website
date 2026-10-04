@@ -1,51 +1,73 @@
 // lib/api.ts
 const API_BASE = '/api/admin/data';
+const PROPERTIES_API = '/api/admin/properties';
+
+// ✅ TAMBAHKAN: fungsi untuk mendapatkan base URL
+function getBaseUrl(): string {
+  // Di server component, gunakan absolute URL
+  if (typeof window === 'undefined') {
+    // Server-side: gunakan NEXT_PUBLIC_BASE_URL atau fallback ke localhost
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    return baseUrl;
+  }
+  // Client-side: gunakan relative path
+  return '';
+}
 
 // ===== EXISTING FUNCTIONS =====
-export async function fetchProperties() {
-  const res = await fetch(`${API_BASE}?type=properties`);
+
+export async function fetchPropertiesOld() {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=properties`);
   if (!res.ok) throw new Error('Failed to fetch properties');
   return res.json();
 }
 
 export async function fetchPromos() {
-  const res = await fetch(`${API_BASE}?type=promos`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=promos`);
   if (!res.ok) throw new Error('Failed to fetch promos');
   return res.json();
 }
 
 export async function fetchFAQs() {
-  const res = await fetch(`${API_BASE}?type=faqs`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=faqs`);
   if (!res.ok) throw new Error('Failed to fetch FAQs');
   return res.json();
 }
 
 export async function fetchAbout() {
-  const res = await fetch(`${API_BASE}?type=about`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=about`);
   if (!res.ok) throw new Error('Failed to fetch about');
   return res.json();
 }
 
 export async function fetchAppearance() {
-  const res = await fetch(`${API_BASE}?type=appearance`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=appearance`);
   if (!res.ok) throw new Error('Failed to fetch appearance');
   return res.json();
 }
 
 export async function fetchSite() {
-  const res = await fetch(`${API_BASE}?type=site`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=site`);
   if (!res.ok) throw new Error('Failed to fetch site');
   return res.json();
 }
 
 export async function fetchHome() {
-  const res = await fetch(`${API_BASE}?type=home`);
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=home`);
   if (!res.ok) throw new Error('Failed to fetch home');
   return res.json();
 }
 
 export async function saveData(type: string, data: any) {
-  const res = await fetch(`${API_BASE}?type=${type}`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=${type}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -57,9 +79,10 @@ export async function saveData(type: string, data: any) {
 // ===== AVAILABILITY FUNCTIONS =====
 
 export async function fetchAvailability(propertyId?: string) {
+  const base = getBaseUrl();
   const url = propertyId
-    ? `${API_BASE}?type=availability&propertyId=${propertyId}`
-    : `${API_BASE}?type=availability`;
+    ? `${base}${API_BASE}?type=availability&propertyId=${propertyId}`
+    : `${base}${API_BASE}?type=availability`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch availability');
   return res.json();
@@ -71,7 +94,8 @@ export async function addBooking(
   endDate: string,
   note?: string
 ) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -96,7 +120,8 @@ export async function addBookingUnit(
   endDate: string,
   note?: string
 ) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -122,7 +147,8 @@ export async function addBookingRoom(
   endDate: string,
   note?: string
 ) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -148,7 +174,8 @@ export async function addBookingDates(
   unitId?: string,
   roomId?: string
 ) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -172,7 +199,8 @@ export async function deleteBooking(
   bookingId: string,
   unitId?: string
 ) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -189,9 +217,9 @@ export async function deleteBooking(
   return res.json();
 }
 
-// ===== UNIT MANAGEMENT (KOS ONLY) =====
 export async function addUnit(propertyId: string, unitName: string) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -208,7 +236,8 @@ export async function addUnit(propertyId: string, unitName: string) {
 }
 
 export async function deleteUnit(propertyId: string, unitId: string) {
-  const res = await fetch(`${API_BASE}?type=availability`, {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${API_BASE}?type=availability`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -220,6 +249,83 @@ export async function deleteUnit(propertyId: string, unitId: string) {
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.error || 'Failed to delete unit');
+  }
+  return res.json();
+}
+
+// ===== NEW: SINGLE PROPERTY ENDPOINTS =====
+
+export async function fetchProperties(page: number = 1, limit: number = 20) {
+  const base = getBaseUrl();
+  const params = new URLSearchParams();
+  params.append('page', String(page));
+  params.append('limit', String(limit));
+  
+  const res = await fetch(`${base}${PROPERTIES_API}?${params}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch properties');
+  }
+  return res.json();
+}
+
+export async function fetchProperty(id: string) {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${PROPERTIES_API}/${id}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch property');
+  }
+  return res.json();
+}
+
+export async function createProperty(property: any) {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${PROPERTIES_API}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(property),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    if (error.details && Array.isArray(error.details)) {
+      const messages = error.details.map((d: any) => `${d.field}: ${d.message}`).join('; ');
+      throw new Error(messages || error.error || 'Failed to create property');
+    }
+    throw new Error(error.error || error.details || 'Failed to create property');
+  }
+  return res.json();
+}
+
+export async function updateProperty(id: string, property: any) {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${PROPERTIES_API}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(property),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    if (error.details && Array.isArray(error.details)) {
+      const messages = error.details.map((d: any) => `${d.field}: ${d.message}`).join('; ');
+      throw new Error(messages || error.error || 'Failed to update property');
+    }
+    throw new Error(error.error || error.details || 'Failed to update property');
+  }
+  return res.json();
+}
+
+export async function deleteProperty(id: string) {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}${PROPERTIES_API}/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to delete property');
   }
   return res.json();
 }

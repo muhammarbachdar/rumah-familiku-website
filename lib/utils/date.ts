@@ -4,12 +4,23 @@ import { id } from 'date-fns/locale';
 
 /**
  * Normalize tanggal ke string YYYY-MM-DD tanpa timezone
+ * FIX: Gunakan getFullYear/getMonth/getDate langsung, BUKAN toISOString()
  */
 export function normalizeDate(date: string | Date): string {
   if (typeof date === 'string') {
+    // Jika string sudah YYYY-MM-DD, return langsung
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return date;
+    }
+    // Jika ada timezone info, ambil tanggalnya
     return date.split('T')[0];
   }
-  return date.toISOString().split('T')[0];
+  
+  // ✅ FIX: Pakai metode manual, BUKAN toISOString()
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -55,7 +66,6 @@ export function isDateRangeOverlap(
   start2: string,
   end2: string
 ): boolean {
-  // start1 < end2 && end1 > start2
   const s1 = parseDate(start1);
   const e1 = parseDate(end1);
   const s2 = parseDate(start2);
@@ -74,12 +84,19 @@ export function isDateInRange(date: string, start: string, end: string): boolean
 
   return (isEqual(d, s) || isAfter(d, s)) && isBefore(d, e);
 }
+
+/**
+ * Cek apakah tanggal1 < tanggal2
+ */
 export function isDateBefore(date1: string, date2: string): boolean {
   const d1 = startOfDay(parseDate(date1));
   const d2 = startOfDay(parseDate(date2));
   return isBefore(d1, d2);
 }
 
+/**
+ * Cek apakah tanggal1 > tanggal2
+ */
 export function isDateAfter(date1: string, date2: string): boolean {
   const d1 = startOfDay(parseDate(date1));
   const d2 = startOfDay(parseDate(date2));

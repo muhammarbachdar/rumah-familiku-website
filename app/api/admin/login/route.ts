@@ -8,6 +8,16 @@ const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 menit
 
+// Bersihkan entry yang sudah kadaluarsa tiap 30 menit biar Map gak numpuk terus
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of loginAttempts.entries()) {
+    if (now > record.resetAt) {
+      loginAttempts.delete(ip);
+    }
+  }
+}, 30 * 60 * 1000);
+
 function checkRateLimit(ip: string): { allowed: boolean; message?: string } {
   const now = Date.now();
   const record = loginAttempts.get(ip);

@@ -1,188 +1,96 @@
 // app/[locale]/properties/[slug]/page.tsx
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { fetchProperties, fetchPromos, fetchAvailability, fetchSite } from '@/lib/api';
+import { PropertyDetailWrapper } from '@/components/property-detail/PropertyDetailWrapper';
+import { getPropertiesPaginated } from '@/lib/data/properties';
+import { getPromos, getSiteSettings } from '@/lib/data/content';
+import { getAvailabilityForProperty } from '@/lib/data/availability';
 import { isPromoActive } from '@/lib/utils/whatsapp';
 import { getBookedDates } from '@/lib/utils/availability';
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { notFound } from 'next/navigation';
 
-import { HotelDetail } from '@/components/property-detail/HotelDetail';
-import { VillaDetail } from '@/components/property-detail/VillaDetail';
-import { ApartemenDetail } from '@/components/property-detail/ApartemenDetail';
-import { KosDetail } from '@/components/property-detail/KosDetail';
+export default async function PropertyDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+  searchParams: Promise<{ roomType?: string }>;
+}) {
+  const { slug, locale } = await params;
+  const { roomType: roomTypeFromQuery } = await searchParams;
 
-export default function PropertyDetailPage() {
-  const locale = useLocale();
-  const params = useParams();
-  const slug = params.slug as string;
-  const searchParams = useSearchParams();
-  const roomTypeFromQuery = searchParams.get('roomType');
+  const [propertiesData, promosData, siteResult] = await Promise.all([
+    getPropertiesPaginated(),
+    getPromos(),
+    getSiteSettings(),
+  ]);
 
-  const [property, setProperty] = useState<any>(null);
-  const [promos, setPromos] = useState<any[]>([]);
-  const [siteData, setSiteData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const properties = propertiesData?.data || propertiesData || [];
+  const promos = promosData || [];
+  const siteData = siteResult || null;
 
-  const [availabilityData, setAvailabilityData] = useState<any>(null);
-  const [selectedRoomTypeId, setSelectedRoomTypeId] = useState<string | null>(null);
-  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
-  const [availabilityLoading, setAvailabilityLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([fetchProperties(), fetchPromos(), fetchSite()])
-      .then(([propertiesData, promosData, siteResult]) => {
-        const found = propertiesData.find((p: any) => p.slug === slug);
-        setProperty(found || null);
-        setPromos(promosData || []);
-        setSiteData(siteResult || null);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load data:', err);
-        setLoading(false);
-      });
-  }, [slug]);
-
-  useEffect(() => {
-    if (property) {
-      fetchAvailability(property.id)
-        .then((data) => {
-          setAvailabilityData(data);
-          if (property.type === 'hotel' && data?.roomTypes?.length > 0) {
-            const matchedFromQuery = roomTypeFromQuery
-              ? data.roomTypes.find((rt: any) => rt.roomTypeId === roomTypeFromQuery)
-              : null;
-            setSelectedRoomTypeId(matchedFromQuery ? matchedFromQuery.roomTypeId : data.roomTypes[0].roomTypeId);
-          }
-          if ((property.type === 'kos' || property.type === 'apartemen') && data?.units?.length > 0) {
-            setSelectedUnitId(data.units[0].unitId);
-          }
-          setAvailabilityLoading(false);
-        })
-        .catch((err) => {
-          console.error('Failed to load availability:', err);
-          setAvailabilityLoading(false);
-        });
-    }
-  }, [property, roomTypeFromQuery]);
-
-  const getActivePromoForProperty = () => {
-    if (!property) return null;
-    return promos.find((promo) => {
-      if (!promo.active || !isPromoActive(promo.validUntil)) return false;
-      if (!promo.propertyIds || promo.propertyIds.length === 0) return true;
-      return promo.propertyIds.includes(property.id);
-    });
-  };
-
-  const activePromo = getActivePromoForProperty();
-  const displayPromoTitle = locale === 'id' ? activePromo?.titleId : activePromo?.titleEn;
-
-  const getBookedDatesForDisplay = () => {
-    if (!availabilityData) return [];
-
-    if ((property?.type === 'kos' || property?.type === 'apartemen') && selectedUnitId) {
-      const unit = availabilityData.units?.find((u: any) => u.unitId === selectedUnitId);
-      return getBookedDates(unit?.bookings || []);
-    }
-
-    if (availabilityData?.mode === 'property') {
-      return getBookedDates(availabilityData.bookings || []);
-    }
-
-    return [];
-  };
-
-  const bookedDates = getBookedDatesForDisplay();
-
-  if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-gray-text">Loading property...</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const property = properties.find((p: any) => p.slug === slug);
 
   if (!property) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-2xl text-gray-text mb-4">Property not found</p>
-            <Link href={`/${locale}/properties`} className="bg-brand-green text-white px-6 py-2 rounded-lg">
-              Back to properties
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+    notFound();
+  }
+
+  let availabilityData = null;
+  let availabilityLoading = false;
+  let initialUnitId: string | null = null;
+
+  try {
+    availabilityData = await getAvailabilityForProperty(property.id);
+
+    if (
+      property.type === 'kos' &&
+      availabilityData &&
+      'units' in availabilityData &&
+      availabilityData.units.length > 0
+    ) {
+      initialUnitId = availabilityData.units[0].unitId;
+    }
+  } catch (err) {
+    console.error('Failed to load availability:', err);
+    availabilityLoading = true;
+  }
+
+  const activePromo = promos.find((promo: any) => {
+    if (!promo.active || !isPromoActive(promo.validUntil)) return false;
+    if (!promo.propertyIds || promo.propertyIds.length === 0) return true;
+    return promo.propertyIds.includes(property.id);
+  });
+
+  const displayPromoTitle = locale === 'id' ? activePromo?.titleId : activePromo?.titleEn;
+
+  let bookedDates: string[] = [];
+  if (availabilityData) {
+    if ((property.type === 'kos' || property.type === 'apartemen') && initialUnitId) {
+      const unit = availabilityData.units?.find((u: any) => u.unitId === initialUnitId);
+      bookedDates = getBookedDates(unit?.bookings || []);
+    } else if (availabilityData?.mode === 'property') {
+      bookedDates = getBookedDates(availabilityData.bookings || []);
+    }
   }
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1">
-        {property.type === 'hotel' && (
-          <HotelDetail
-            property={property}
-            availabilityData={availabilityData}
-            siteData={siteData}
-            activePromo={activePromo}
-            displayPromoTitle={displayPromoTitle}
-            locale={locale}
-          />
-        )}
-        {property.type === 'kos' && (
-          <KosDetail
-            property={property}
-            availabilityData={availabilityData}
-            availabilityLoading={availabilityLoading}
-            selectedUnitId={selectedUnitId}
-            setSelectedUnitId={setSelectedUnitId}
-            bookedDates={bookedDates}
-            siteData={siteData}
-            activePromo={activePromo}
-            displayPromoTitle={displayPromoTitle}
-            locale={locale}
-          />
-        )}
-        {property.type === 'rumah' && (
-          <VillaDetail
-            property={property}
-            availabilityData={availabilityData}
-            availabilityLoading={availabilityLoading}
-            bookedDates={bookedDates}
-            siteData={siteData}
-            activePromo={activePromo}
-            displayPromoTitle={displayPromoTitle}
-            locale={locale}
-          />
-        )}
-        {property.type === 'apartemen' && (
-          <KosDetail
-            property={property}
-            availabilityData={availabilityData}
-            availabilityLoading={availabilityLoading}
-            selectedUnitId={selectedUnitId}
-            setSelectedUnitId={setSelectedUnitId}
-            bookedDates={bookedDates}
-            siteData={siteData}
-            activePromo={activePromo}
-            displayPromoTitle={displayPromoTitle}
-            locale={locale}
-          />
-        )}
+        <PropertyDetailWrapper
+          property={property}
+          availabilityData={availabilityData}
+          availabilityLoading={availabilityLoading}
+          bookedDates={bookedDates}
+          siteData={siteData}
+          activePromo={activePromo}
+          displayPromoTitle={displayPromoTitle}
+          locale={locale}
+          // ✅ GANTI: initialUnitId bukan selectedUnitId
+          initialUnitId={initialUnitId}
+        />
       </main>
       <Footer />
     </div>

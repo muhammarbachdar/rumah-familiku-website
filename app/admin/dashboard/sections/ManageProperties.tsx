@@ -1,76 +1,43 @@
-'use client';
-
+// app/admin/dashboard/sections/ManageProperties.tsx
+// ===== IMPORTS =====
 import { useState, useEffect } from 'react';
-import { addUnit, deleteUnit, fetchProperties } from '@/lib/api';
+import { addUnit, deleteUnit, fetchProperties, createProperty, updateProperty, deleteProperty } from '@/lib/api';
 import { toast } from 'sonner';
 import { extractMapsEmbedUrl } from '@/lib/maps';
 import { FACILITY_OPTIONS } from '@/lib/constants/facilities';
+import slugify from 'slugify';
 
-// ===== ModalForm Props Interface =====
-interface ModalFormProps {
-  title: string;
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
-  onSave: () => Promise<void>;
-  onClose: () => void;
-  isAdd?: boolean;
-  typeBadge: Record<string, string>;
-  typeDisplay: Record<string, string>;
-  // Unit states
-  newUnitName: string;
-  setNewUnitName: React.Dispatch<React.SetStateAction<string>>;
-  isUnitSubmitting: boolean;
-  setIsUnitSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
-  unitMessage: { type: 'success' | 'error'; text: string } | null;
-  setUnitMessage: React.Dispatch<React.SetStateAction<{ type: 'success' | 'error'; text: string } | null>>;
-  handleAddUnit: () => Promise<void>;
-  handleDeleteUnit: (unitId: string, unitName: string) => Promise<void>;
-  // RoomType states
-  roomTypeForm: any;
-  setRoomTypeForm: React.Dispatch<React.SetStateAction<any>>;
-  roomForm: { roomNumber: string };
-  setRoomForm: React.Dispatch<React.SetStateAction<{ roomNumber: string }>>;
-  editingRoomTypeIndex: number | null;
-  setEditingRoomTypeIndex: React.Dispatch<React.SetStateAction<number | null>>;
-  showAddRoomType: boolean;
-  setShowAddRoomType: React.Dispatch<React.SetStateAction<boolean>>;
-  showAddRoom: number | null;
-  setShowAddRoom: React.Dispatch<React.SetStateAction<number | null>>;
-  handleAddRoomType: () => void;
-  handleSaveRoomType: () => void;
-  handleEditRoomType: (idx: number) => void;
-  handleUpdateRoomType: () => void;
-  handleDeleteRoomType: (idx: number) => void;
-  handleAddRoom: (roomTypeIdx: number) => void;
-  handleSaveRoom: () => void;
-  handleDeleteRoom: (roomTypeIdx: number, roomIdx: number) => void;
-}
-
+// ===== KOMPONEN UTAMA =====
 export default function ManagePropertiesSection() {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProperty, setEditingProperty] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [initialFormData, setInitialFormData] = useState<any>(null);
+
   const [form, setForm] = useState({
     nameId: '', nameEn: '', type: '', locationId: '', locationEn: '', mapsUrl: '',
     capacityMin: 0, capacityMax: 0, description: '', descriptionEn: '',
     image: '', images: [] as string[], imagesCategorized: [] as { url: string; category: string }[],
     facilities: [] as { label: string; labelEn: string; icon: string }[],
     pricingWeekday: 0, pricingWeekend: 0,
+    pricingMode: 'wni-wna' as 'general' | 'wni-wna',
+    monthlyPrice: 0,
     monthlyPricingWNI: 0, monthlyPricingWNA: 0,
     rules: [] as string[], rulesEn: [] as string[],
     roomTypes: [] as any[],
     units: [] as any[],
+    version: 1,
   });
 
-  // Unit management states (untuk Kos)
+  // Unit management states
   const [newUnitName, setNewUnitName] = useState('');
   const [isUnitSubmitting, setIsUnitSubmitting] = useState(false);
   const [unitMessage, setUnitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Room Type management states (untuk Hotel)
+  // Room Type management states
   const [editingRoomTypeIndex, setEditingRoomTypeIndex] = useState<number | null>(null);
-  const [editingRoomIndex, setEditingRoomIndex] = useState<{ roomTypeIdx: number; roomIdx: number } | null>(null);
   const [showAddRoomType, setShowAddRoomType] = useState(false);
   const [showAddRoom, setShowAddRoom] = useState<number | null>(null);
   const [roomTypeForm, setRoomTypeForm] = useState({
@@ -79,12 +46,41 @@ export default function ManagePropertiesSection() {
   });
   const [roomForm, setRoomForm] = useState({ roomNumber: '' });
 
+  // ===== LOAD DATA =====
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchProperties(1, 100);
+      const data = result.data || result;
+      setProperties(data || []);
+    } catch (error) {
+      console.error('Failed to load properties:', error);
+      toast.error('Gagal memuat data properti.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => { loadData(); }, []);
-  const loadData = async () => { const res = await fetch('/api/admin/data?type=properties'); const data = await res.json(); setProperties(data || []); setLoading(false); };
+
   const saveToAPI = async (data: any) => {
-    const res = await fetch('/api/admin/data?type=properties', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const res = await fetch('/api/admin/data?type=properties', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
     if (!res.ok) {
       const err = await res.json();
+      if (err.details && Array.isArray(err.details) && err.details.length > 0) {
+        const messages = err.details.map((d: any) => {
+          const field = d.path?.join('.') || 'field';
+          return `${field}: ${d.message}`;
+        }).join('; ');
+        throw new Error(messages);
+      }
+      if (typeof err.details === 'string') {
+        throw new Error(err.details);
+      }
       throw new Error(err.error || 'Gagal menyimpan properti');
     }
     return res;
@@ -97,149 +93,268 @@ export default function ManagePropertiesSection() {
     setShowAddRoom(null);
     setRoomTypeForm({ nameId: '', nameEn: '', capacity: 2, priceWeekday: 0, priceWeekend: 0, images: [], rooms: [] });
     setRoomForm({ roomNumber: '' });
-    setEditingRoomIndex(null);
   };
 
   // ==================== Edit ====================
   const handleEdit = (p: any) => {
     resetHotelStates();
     setEditingProperty(p);
-    setForm({
-      nameId: p.nameId, nameEn: p.nameEn, type: p.type,
-      locationId: p.locationId, locationEn: p.locationEn, mapsUrl: p.mapsUrl || '',
-      capacityMin: p.capacity.min, capacityMax: p.capacity.max,
-      description: p.description, descriptionEn: p.descriptionEn,
-      image: p.image || '', images: p.images || [], imagesCategorized: p.imagesCategorized || [],
+    
+    // ✅ TAMBAHKAN: simpan data awal untuk reset
+    const formData = {
+      nameId: p.nameId,
+      nameEn: p.nameEn,
+      type: p.type,
+      locationId: p.locationId,
+      locationEn: p.locationEn,
+      mapsUrl: p.mapsUrl || '',
+      capacityMin: p.capacity.min,
+      capacityMax: p.capacity.max,
+      description: p.description,
+      descriptionEn: p.descriptionEn,
+      image: p.image || '',
+      images: p.images || [],
+      imagesCategorized: p.imagesCategorized || [],
       facilities: p.facilities || [],
       pricingWeekday: p.pricing?.weekday || 0,
       pricingWeekend: p.pricing?.weekend || 0,
+      pricingMode: p.pricingMode || 'wni-wna',
+      monthlyPrice: p.monthlyPrice || 0,
       monthlyPricingWNI: p.monthlyPricingWNI || 0,
       monthlyPricingWNA: p.monthlyPricingWNA || 0,
       rules: p.rules || [],
       rulesEn: p.rulesEn || [],
       roomTypes: p.roomTypes || [],
       units: p.units || [],
-    });
+      version: p.version || 1,
+    };
+    
+    setForm(formData);
+    setInitialFormData(formData); // ✅ SIMPAN untuk reset
     setUnitMessage(null);
     setNewUnitName('');
   };
 
+  // ==================== Save (Update) ====================
   const handleSave = async () => {
-    const previousProperties = [...properties];
-    const updated = properties.map(p => p.id === editingProperty.id
-      ? {
-          ...p,
-          nameId: form.nameId, nameEn: form.nameEn, type: form.type,
-          locationId: form.locationId, locationEn: form.locationEn, mapsUrl: form.mapsUrl,
-          capacity: { min: form.capacityMin, max: form.capacityMax },
-          description: form.description, descriptionEn: form.descriptionEn,
-          image: form.image, images: form.images, imagesCategorized: form.imagesCategorized, facilities: form.facilities,
-          pricing: form.type !== 'kos' ? { weekday: form.pricingWeekday, weekend: form.pricingWeekend } : undefined,
-          monthlyPricingWNI: form.type === 'kos' ? form.monthlyPricingWNI : undefined,
-          monthlyPricingWNA: form.type === 'kos' ? form.monthlyPricingWNA : undefined,
-          rules: form.rules, rulesEn: form.rulesEn,
-          roomTypes: form.type === 'hotel' ? form.roomTypes : undefined,
-          units: form.type !== 'hotel' ? form.units : undefined,
-        }
-      : p
-    );
-    setProperties(updated);
+    const missing = validateRequiredFields(form);
+    if (missing.length > 0) {
+      toast.error(`Field wajib belum diisi: ${missing.join(', ')}`);
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      await saveToAPI(updated);
+      const propertyData: any = {
+        id: editingProperty.id,
+        nameId: form.nameId,
+        nameEn: form.nameEn,
+        type: form.type,
+        locationId: form.locationId,
+        locationEn: form.locationEn,
+        mapsUrl: form.mapsUrl,
+        capacity: { min: form.capacityMin, max: form.capacityMax },
+        description: form.description,
+        descriptionEn: form.descriptionEn,
+        image: form.image,
+        images: form.images,
+        imagesCategorized: form.imagesCategorized,
+        facilities: form.facilities,
+        rules: form.rules,
+        rulesEn: form.rulesEn,
+        version: form.version,
+      };
+
+      if (form.type === 'kos') {
+        propertyData.pricingMode = form.pricingMode || 'wni-wna';
+        if (propertyData.pricingMode === 'general') {
+          propertyData.monthlyPrice = form.monthlyPrice || 0;
+        } else {
+          propertyData.monthlyPricingWNI = form.monthlyPricingWNI || 0;
+          propertyData.monthlyPricingWNA = form.monthlyPricingWNA || 0;
+        }
+      } else {
+        propertyData.pricing = {
+          weekday: form.pricingWeekday || 0,
+          weekend: form.pricingWeekend || 0,
+        };
+      }
+
+      if (form.type === 'hotel') {
+        propertyData.roomTypes = form.roomTypes || [];
+      }
+
+      if (form.type !== 'hotel') {
+        propertyData.units = form.units || [];
+      }
+
+      await updateProperty(editingProperty.id, propertyData);
+
       await loadData();
       setEditingProperty(null);
       resetHotelStates();
+      setInitialFormData(null); 
       toast.success('Properti berhasil disimpan!');
-    } catch (error) {
-      setProperties(previousProperties);
-      toast.error('Gagal menyimpan properti. Silakan coba lagi.');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menyimpan properti. Silakan coba lagi.');
       console.error('Save failed:', error);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  // ==================== Validasi Field Wajib ====================
+  const validateRequiredFields = (f: any): string[] => {
+    const missing: string[] = [];
+    if (!f.nameId?.trim()) missing.push('Nama Properti (ID)');
+    if (!f.nameEn?.trim()) missing.push('Nama Properti (EN)');
+    if (!f.locationId?.trim()) missing.push('Lokasi (ID)');
+    if (!f.locationEn?.trim()) missing.push('Lokasi (EN)');
+    if (!f.description?.trim()) missing.push('Deskripsi (ID)');
+    if (!f.descriptionEn?.trim()) missing.push('Deskripsi (EN)');
+    if (!f.image?.trim()) missing.push('Main Image');
+    if (!f.capacityMin && f.capacityMin !== 0) missing.push('Kapasitas Minimum');
+    if (!f.capacityMax) missing.push('Kapasitas Maksimum');
+
+    if (f.type === 'hotel' && f.roomTypes) {
+      for (let i = 0; i < f.roomTypes.length; i++) {
+        const rt = f.roomTypes[i];
+        if (!rt.capacity || rt.capacity <= 0) {
+          missing.push(`Kapasitas Tipe Kamar #${i + 1} (${rt.nameId || 'Unnamed'}) wajib diisi`);
+        }
+      }
+    }
+
+    if (f.type === 'hotel' && (!f.roomTypes || f.roomTypes.length === 0)) {
+      missing.push('Minimal 1 Tipe Kamar (Hotel)');
+    }
+    if (f.type === 'kos' && (!f.units || f.units.length === 0)) {
+      missing.push('Minimal 1 Kamar (Kos)');
+    }
+    return missing;
   };
 
   // ==================== Tambah Properti ====================
   const handleAdd = () => {
+    loadData();
     resetHotelStates();
     setForm({
       nameId: '', nameEn: '', type: 'hotel', locationId: '', locationEn: '', mapsUrl: '',
       capacityMin: 1, capacityMax: 1, description: '', descriptionEn: '',
       image: '', images: [], imagesCategorized: [], facilities: [],
       pricingWeekday: 0, pricingWeekend: 0,
+      pricingMode: 'wni-wna',
+      monthlyPrice: 0,
       monthlyPricingWNI: 0, monthlyPricingWNA: 0,
       rules: [], rulesEn: [],
       roomTypes: [],
       units: [],
+      version: 1,
     });
     setNewUnitName('');
     setUnitMessage(null);
     setShowAddModal(true);
   };
+
   const generateSlug = (name: string) => {
-    return name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  };
+  return slugify(name, {
+    lower: true,      // lowercase
+    strict: true,     // remove special characters
+    remove: /[*+~.()'"!:@]/g, // remove extra chars
+  });
+};
+
+  // ==================== Save Add (Create) ====================
   const handleSaveAdd = async () => {
-    const slug = generateSlug(form.nameId);
-    const newProperty: any = {
-      id: `prop-${Date.now()}`,
-      slug,
-      nameId: form.nameId, nameEn: form.nameEn, type: form.type,
-      locationId: form.locationId, locationEn: form.locationEn, mapsUrl: form.mapsUrl,
-      capacity: { min: form.capacityMin, max: form.capacityMax },
-      description: form.description, descriptionEn: form.descriptionEn,
-      image: form.image, images: form.images, imagesCategorized: form.imagesCategorized, facilities: form.facilities,
-      rules: form.rules, rulesEn: form.rulesEn,
-      roomTypes: form.type === 'hotel' ? form.roomTypes : undefined,
-      units: form.type !== 'hotel' ? form.units : undefined,
-    };
-    if (form.type !== 'kos') {
-      newProperty.pricing = { weekday: form.pricingWeekday, weekend: form.pricingWeekend };
-    } else {
-      newProperty.monthlyPricingWNI = form.monthlyPricingWNI;
-      newProperty.monthlyPricingWNA = form.monthlyPricingWNA;
+    const missing = validateRequiredFields(form);
+    if (missing.length > 0) {
+      toast.error(`Field wajib belum diisi: ${missing.join(', ')}`);
+      return;
     }
-    const newProperties = [...properties, newProperty];
-    setProperties(newProperties);
+
+    setIsSubmitting(true);
+
     try {
-      await saveToAPI(newProperties);
-      toast.success('Properti berhasil ditambahkan!');
+      const slug = generateSlug(form.nameId);
+
+      const propertyData: any = {
+        slug,
+        nameId: form.nameId,
+        nameEn: form.nameEn,
+        type: form.type,
+        locationId: form.locationId,
+        locationEn: form.locationEn,
+        mapsUrl: form.mapsUrl,
+        capacity: { min: form.capacityMin, max: form.capacityMax },
+        description: form.description,
+        descriptionEn: form.descriptionEn,
+        image: form.image,
+        images: form.images,
+        imagesCategorized: form.imagesCategorized,
+        facilities: form.facilities,
+        rules: form.rules,
+        rulesEn: form.rulesEn,
+      };
+
+      if (form.type === 'kos') {
+        propertyData.pricingMode = form.pricingMode || 'wni-wna';
+        if (propertyData.pricingMode === 'general') {
+          propertyData.monthlyPrice = form.monthlyPrice || 0;
+        } else {
+          propertyData.monthlyPricingWNI = form.monthlyPricingWNI || 0;
+          propertyData.monthlyPricingWNA = form.monthlyPricingWNA || 0;
+        }
+      } else {
+        propertyData.pricing = {
+          weekday: form.pricingWeekday || 0,
+          weekend: form.pricingWeekend || 0,
+        };
+      }
+
+      if (form.type === 'hotel') {
+        propertyData.roomTypes = form.roomTypes || [];
+      }
+
+      if (form.type !== 'hotel') {
+        propertyData.units = form.units || [];
+      }
+
+      await createProperty(propertyData);
+
+      await loadData();
       setShowAddModal(false);
       resetHotelStates();
-    } catch (error) {
-      toast.error('Gagal menambahkan properti. Silakan coba lagi.');
+      setInitialFormData(null); 
+      toast.success('Properti berhasil ditambahkan!');
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menambahkan properti. Silakan coba lagi.');
       console.error('Add failed:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // ==================== Hapus Properti ====================
   const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Hapus properti "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
-      // ===== SIMPAN STATE SEBELUMNYA UNTUK ROLLBACK =====
-      const previousProperties = [...properties];
-      
-      // ===== OPTIMISTIC UPDATE =====
-      setProperties(prev => prev.filter(p => p.id !== id));
-      
-      try {
-        const res = await fetch('/api/admin/data?type=properties', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'deleteProperty', id }),
-        });
+    if (!confirm(`Hapus properti "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      return;
+    }
 
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.error || 'Gagal menghapus properti');
-        }
+    setIsSubmitting(true);
+    const previousProperties = [...properties];
+    setProperties(prev => prev.filter(p => p.id !== id));
 
-        toast.success('Properti berhasil dihapus!');
-      } catch (error: any) {
-        // ===== ROLLBACK JIKA GAGAL =====
-        setProperties(previousProperties);
-        toast.error(error.message || 'Gagal menghapus properti. Silakan coba lagi.');
-        console.error('Delete failed:', error);
-      }
+    try {
+      await deleteProperty(id);
+      setInitialFormData(null); 
+      toast.success('Properti berhasil dihapus!');
+    } catch (error: any) {
+      setProperties(previousProperties);
+      toast.error(error.message || 'Gagal menghapus properti. Silakan coba lagi.');
+      console.error('Delete failed:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -265,15 +380,17 @@ export default function ManagePropertiesSection() {
       await addUnit(editingProperty.id, newUnitName.trim());
 
       const refreshed = await fetchProperties();
-      const updatedProperty = refreshed.find((p: any) => p.id === editingProperty.id);
+      const data = refreshed.data || refreshed;
+      const updatedProperty = data.find((p: any) => p.id === editingProperty.id);
       if (updatedProperty) {
         setEditingProperty(updatedProperty);
-        setProperties(refreshed);
+        setProperties(data);
         setForm(prev => ({ ...prev, units: updatedProperty.units || [] }));
       }
 
       setNewUnitName('');
       setUnitMessage({ type: 'success', text: 'Kamar berhasil ditambahkan!' });
+      setInitialFormData(null); 
       toast.success('Kamar berhasil ditambahkan!');
     } catch (err: any) {
       setUnitMessage({ type: 'error', text: err.message || 'Gagal menambahkan kamar.' });
@@ -298,14 +415,16 @@ export default function ManagePropertiesSection() {
       await deleteUnit(editingProperty.id, unitId);
 
       const refreshed = await fetchProperties();
-      const updatedProperty = refreshed.find((p: any) => p.id === editingProperty.id);
+      const data = refreshed.data || refreshed;
+      const updatedProperty = data.find((p: any) => p.id === editingProperty.id);
       if (updatedProperty) {
         setEditingProperty(updatedProperty);
-        setProperties(refreshed);
+        setProperties(data);
         setForm(prev => ({ ...prev, units: updatedProperty.units || [] }));
       }
 
       setUnitMessage({ type: 'success', text: 'Kamar berhasil dihapus!' });
+      setInitialFormData(null); 
       toast.success('Kamar berhasil dihapus!');
     } catch (err: any) {
       setUnitMessage({ type: 'error', text: err.message || 'Gagal menghapus kamar.' });
@@ -352,6 +471,7 @@ export default function ManagePropertiesSection() {
     }));
     setShowAddRoomType(false);
     setRoomTypeForm({ nameId: '', nameEn: '', capacity: 2, priceWeekday: 0, priceWeekend: 0, images: [], rooms: [] });
+    setInitialFormData(null); 
     toast.success('Tipe kamar berhasil ditambahkan!');
   };
 
@@ -390,14 +510,15 @@ export default function ManagePropertiesSection() {
     setForm(prev => ({ ...prev, roomTypes: updated }));
     setEditingRoomTypeIndex(null);
     setRoomTypeForm({ nameId: '', nameEn: '', capacity: 2, priceWeekday: 0, priceWeekend: 0, images: [], rooms: [] });
+    setInitialFormData(null); 
     toast.success('Tipe kamar berhasil diupdate!');
-    
   };
 
   const handleDeleteRoomType = (idx: number) => {
     if (!confirm('Hapus tipe kamar ini? Semua kamar di dalamnya juga akan terhapus.')) return;
     const updated = form.roomTypes.filter((_: any, i: number) => i !== idx);
     setForm(prev => ({ ...prev, roomTypes: updated }));
+    setInitialFormData(null); 
     toast.success('Tipe kamar berhasil dihapus!');
   };
 
@@ -422,6 +543,7 @@ export default function ManagePropertiesSection() {
     setForm(prev => ({ ...prev, roomTypes: updated }));
     setShowAddRoom(null);
     setRoomForm({ roomNumber: '' });
+    setInitialFormData(null); 
     toast.success('Kamar berhasil ditambahkan!');
   };
 
@@ -430,18 +552,25 @@ export default function ManagePropertiesSection() {
     const updated = [...form.roomTypes];
     updated[roomTypeIdx].rooms = updated[roomTypeIdx].rooms.filter((_: any, i: number) => i !== roomIdx);
     setForm(prev => ({ ...prev, roomTypes: updated }));
+    setInitialFormData(null); 
     toast.success('Kamar berhasil dihapus!');
   };
 
   const typeBadge: Record<string, string> = {
-    hotel: 'bg-blue-100 text-blue-700', kos: 'bg-yellow-100 text-yellow-700',
-    apartemen: 'bg-purple-100 text-purple-700', rumah: 'bg-green-100 text-green-700'
+    hotel: 'bg-blue-100 text-blue-700',
+    kos: 'bg-yellow-100 text-yellow-700',
+    apartemen: 'bg-purple-100 text-purple-700',
+    rumah: 'bg-green-100 text-green-700'
   };
   const typeDisplay: Record<string, string> = {
-    hotel: 'Hotel', kos: 'Kos', apartemen: 'Apartemen', rumah: 'Rumah/Villa'
+    hotel: 'Hotel',
+    kos: 'Kos',
+    apartemen: 'Apartemen',
+    rumah: 'Rumah/Villa'
   };
 
   if (loading) return <div className="bg-white rounded-lg shadow p-6">Loading properties...</div>;
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-6">
@@ -471,12 +600,19 @@ export default function ManagePropertiesSection() {
               </div>
               <div className="flex gap-2 shrink-0">
                 <button onClick={() => handleEdit(p)} className="text-blue-600 hover:underline">Edit</button>
-                <button onClick={() => handleDelete(p.id, p.nameId)} className="text-red-600 hover:underline">Hapus</button>
+                <button 
+                  onClick={() => handleDelete(p.id, p.nameId)} 
+                  disabled={isSubmitting}
+                  className={`text-red-600 hover:underline ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isSubmitting ? '...' : 'Hapus'}
+                </button>
               </div>
             </div>
           );
         })}
       </div>
+
       {editingProperty && (
         <ModalForm
           title={`Edit — ${editingProperty.nameId}`}
@@ -484,6 +620,10 @@ export default function ManagePropertiesSection() {
           setForm={setForm}
           onSave={handleSave}
           onClose={() => {
+            // ✅ RESET ke data awal
+            if (initialFormData) {
+              setForm(initialFormData);
+            }
             setEditingProperty(null);
             resetHotelStates();
           }}
@@ -516,8 +656,10 @@ export default function ManagePropertiesSection() {
           handleAddRoom={handleAddRoom}
           handleSaveRoom={handleSaveRoom}
           handleDeleteRoom={handleDeleteRoom}
+          isSubmitting={isSubmitting}
         />
       )}
+
       {showAddModal && (
         <ModalForm
           title="Tambah Properti Baru"
@@ -525,6 +667,19 @@ export default function ManagePropertiesSection() {
           setForm={setForm}
           onSave={handleSaveAdd}
           onClose={() => {
+            setForm({
+              nameId: '', nameEn: '', type: 'hotel', locationId: '', locationEn: '', mapsUrl: '',
+              capacityMin: 1, capacityMax: 1, description: '', descriptionEn: '',
+              image: '', images: [], imagesCategorized: [], facilities: [],
+              pricingWeekday: 0, pricingWeekend: 0,
+              pricingMode: 'wni-wna',
+              monthlyPrice: 0,
+              monthlyPricingWNI: 0, monthlyPricingWNA: 0,
+              rules: [], rulesEn: [],
+              roomTypes: [],
+              units: [],
+              version: 1,
+            });
             setShowAddModal(false);
             resetHotelStates();
           }}
@@ -557,13 +712,52 @@ export default function ManagePropertiesSection() {
           handleAddRoom={handleAddRoom}
           handleSaveRoom={handleSaveRoom}
           handleDeleteRoom={handleDeleteRoom}
+          isSubmitting={isSubmitting}
         />
       )}
     </div>
   );
 }
 
-// ===== ModalForm Component (dipindahkan ke luar) =====
+// ===== ModalForm Component =====
+interface ModalFormProps {
+  title: string;
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+  onSave: () => Promise<void>;
+  onClose: () => void;
+  isAdd?: boolean;
+  typeBadge: Record<string, string>;
+  typeDisplay: Record<string, string>;
+  newUnitName: string;
+  setNewUnitName: React.Dispatch<React.SetStateAction<string>>;
+  isUnitSubmitting: boolean;
+  setIsUnitSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+  unitMessage: { type: 'success' | 'error'; text: string } | null;
+  setUnitMessage: React.Dispatch<React.SetStateAction<{ type: 'success' | 'error'; text: string } | null>>;
+  handleAddUnit: () => Promise<void>;
+  handleDeleteUnit: (unitId: string, unitName: string) => Promise<void>;
+  roomTypeForm: any;
+  setRoomTypeForm: React.Dispatch<React.SetStateAction<any>>;
+  roomForm: { roomNumber: string };
+  setRoomForm: React.Dispatch<React.SetStateAction<{ roomNumber: string }>>;
+  editingRoomTypeIndex: number | null;
+  setEditingRoomTypeIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  showAddRoomType: boolean;
+  setShowAddRoomType: React.Dispatch<React.SetStateAction<boolean>>;
+  showAddRoom: number | null;
+  setShowAddRoom: React.Dispatch<React.SetStateAction<number | null>>;
+  handleAddRoomType: () => void;
+  handleSaveRoomType: () => void;
+  handleEditRoomType: (idx: number) => void;
+  handleUpdateRoomType: () => void;
+  handleDeleteRoomType: (idx: number) => void;
+  handleAddRoom: (roomTypeIdx: number) => void;
+  handleSaveRoom: () => void;
+  handleDeleteRoom: (roomTypeIdx: number, roomIdx: number) => void;
+  isSubmitting: boolean;
+}
+
 function ModalForm({
   title,
   form,
@@ -599,7 +793,24 @@ function ModalForm({
   handleAddRoom,
   handleSaveRoom,
   handleDeleteRoom,
+  isSubmitting,
 }: ModalFormProps) {
+  const isFormValid = () => {
+    return (
+      form.nameId?.trim() &&
+      form.nameEn?.trim() &&
+      form.locationId?.trim() &&
+      form.locationEn?.trim() &&
+      form.description?.trim() &&
+      form.descriptionEn?.trim() &&
+      form.image?.trim() &&
+      (form.capacityMin || form.capacityMin === 0) &&
+      form.capacityMax &&
+      !(form.type === 'hotel' && (!form.roomTypes || form.roomTypes.length === 0)) &&
+      !(form.type === 'kos' && (!form.units || form.units.length === 0))
+    );
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto my-8">
@@ -658,7 +869,7 @@ function ModalForm({
                     : '⚠ Format link tidak dikenali — pastikan link mengandung koordinat (ada simbol @ diikuti angka)'}
                 </p>
               )}
-            </div>  
+            </div>
 
             {/* Kapasitas */}
             <div>
@@ -694,14 +905,51 @@ function ModalForm({
               </>
             ) : (
               <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Harga Bulanan (WNI)</label>
-                  <input type="number" placeholder="Contoh: 2900000" value={form.monthlyPricingWNI} onChange={e => setForm({...form, monthlyPricingWNI: Number(e.target.value)})} className="w-full border rounded-lg px-3 py-2" />
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mode Harga Kos</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="pricingMode"
+                        value="general"
+                        checked={form.pricingMode === 'general'}
+                        onChange={() => setForm({...form, pricingMode: 'general'})}
+                        className="accent-brand-green"
+                      />
+                      <span>General (1 harga)</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="pricingMode"
+                        value="wni-wna"
+                        checked={form.pricingMode === 'wni-wna'}
+                        onChange={() => setForm({...form, pricingMode: 'wni-wna'})}
+                        className="accent-brand-green"
+                      />
+                      <span>WNI / WNA (2 harga)</span>
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Harga Bulanan (WNA)</label>
-                  <input type="number" placeholder="Contoh: 3500000" value={form.monthlyPricingWNA} onChange={e => setForm({...form, monthlyPricingWNA: Number(e.target.value)})} className="w-full border rounded-lg px-3 py-2" />
-                </div>
+                {form.pricingMode === 'general' ? (
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Harga per Bulan</label>
+                    <input type="number" placeholder="Contoh: 2500000" value={form.monthlyPrice} onChange={e => setForm({...form, monthlyPrice: Number(e.target.value)})} className="w-full border rounded-lg px-3 py-2" />
+                    <p className="text-xs text-gray-500 mt-1">Harga tunggal untuk semua tamu</p>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Harga Bulanan (WNI)</label>
+                      <input type="number" placeholder="Contoh: 2500000" value={form.monthlyPricingWNI} onChange={e => setForm({...form, monthlyPricingWNI: Number(e.target.value)})} className="w-full border rounded-lg px-3 py-2" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Harga Bulanan (WNA)</label>
+                      <input type="number" placeholder="Contoh: 3000000" value={form.monthlyPricingWNA} onChange={e => setForm({...form, monthlyPricingWNA: Number(e.target.value)})} className="w-full border rounded-lg px-3 py-2" />
+                    </div>
+                  </>
+                )}
               </>
             )}
 
@@ -733,7 +981,6 @@ function ModalForm({
                       toast.error('Terjadi kesalahan saat upload.');
                       console.error(err);
                     }
-                    // Reset input agar bisa upload ulang file yang sama
                     e.target.value = '';
                   }}
                   className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
@@ -747,6 +994,7 @@ function ModalForm({
                     type="button"
                     onClick={() => setForm((prev: any) => ({ ...prev, image: '' }))}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                    aria-label="Hapus gambar utama"
                   >
                     ✕
                   </button>
@@ -754,9 +1002,7 @@ function ModalForm({
               )}
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Galeri Foto
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Galeri Foto</label>
               <div className="flex items-center gap-3 mb-2">
                 <input
                   type="file"
@@ -809,6 +1055,7 @@ function ModalForm({
                           }));
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                        aria-label="Hapus gambar utama"
                       >
                         ✕
                       </button>
@@ -818,10 +1065,9 @@ function ModalForm({
               )}
             </div>
 
+            {/* Fasilitas */}
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fasilitas (pilih yang tersedia)
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Fasilitas (pilih yang tersedia)</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {FACILITY_OPTIONS.map((opt) => {
                   const isChecked = form.facilities.some((f: any) => f.icon === opt.key);
@@ -934,7 +1180,6 @@ function ModalForm({
                           </div>
                         </div>
 
-                        {/* Daftar Kamar di dalam Room Type */}
                         <div className="mt-3 pt-3 border-t border-gray-100">
                           <div className="flex justify-between items-center mb-2">
                             <p className="text-xs font-medium text-gray-500">Nomor Kamar</p>
@@ -955,6 +1200,7 @@ function ModalForm({
                                   <button
                                     onClick={() => handleDeleteRoom(rtIdx, rIdx)}
                                     className="text-red-500 hover:text-red-700 text-xs"
+                                    aria-label="Hapus kamar"
                                   >
                                     ✕
                                   </button>
@@ -1079,6 +1325,7 @@ function ModalForm({
                                       }));
                                     }}
                                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                                    aria-label="Hapus foto tipe kamar"
                                   >
                                     ✕
                                   </button>
@@ -1128,6 +1375,7 @@ function ModalForm({
                                       setRoomTypeForm({...roomTypeForm, rooms: updated});
                                     }}
                                     className="text-red-500 hover:text-red-700 text-xs"
+                                    aria-label="Hapus nomor kamar"
                                   >
                                     ✕
                                   </button>
@@ -1215,6 +1463,7 @@ function ModalForm({
                           onClick={() => handleDeleteUnit(u.unitId, u.unitName)}
                           className="text-red-500 hover:text-red-700 text-xs"
                           disabled={isUnitSubmitting}
+                          aria-label="Hapus unit"
                         >
                           ✕
                         </button>
@@ -1248,9 +1497,23 @@ function ModalForm({
               </div>
             )}
           </div>
+
           <div className="flex gap-3 mt-6">
-            <button onClick={onSave} className="flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition">Simpan</button>
-            <button onClick={onClose} className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">Batal</button>
+            <button
+              onClick={onSave}
+              disabled={isSubmitting || !isFormValid()}
+              className={`flex-1 bg-brand-green text-white py-2 rounded-lg hover:bg-green-hover transition 
+                ${(isSubmitting || !isFormValid()) ? 'opacity-40 cursor-not-allowed disabled:hover:bg-brand-green' : ''}`}
+            >
+              {isSubmitting ? 'Menyimpan...' : 'Simpan'}
+            </button>
+            <button 
+              onClick={onClose} 
+              disabled={isSubmitting}
+              className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+            >
+              Batal
+            </button>
           </div>
         </div>
       </div>

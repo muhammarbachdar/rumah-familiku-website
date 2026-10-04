@@ -1,3 +1,4 @@
+// app/admin/dashboard/sections/ManageAvailability.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,10 +33,12 @@ export default function ManageAvailabilitySection() {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [note, setNote] = useState('');
   const [selectedUnitId, setSelectedUnitId] = useState<string>('');
-  const [selectedRoomId, setSelectedRoomId] = useState<string>(''); // NEW: untuk Hotel
-  const [selectedRoomTypeId, setSelectedRoomTypeId] = useState<string>(''); // NEW: untuk Hotel
+  const [selectedRoomId, setSelectedRoomId] = useState<string>('');
+  const [selectedRoomTypeId, setSelectedRoomTypeId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // ✅ HAPUS: state message (pakai toast saja)
+  // const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Load data
   useEffect(() => {
@@ -87,16 +90,14 @@ export default function ManageAvailabilitySection() {
       const prop = properties.find((p: any) => p.id === selectedPropertyId);
       setSelectedProperty(prop);
 
-      // Fetch availability untuk properti ini
       fetchAvailability(selectedPropertyId)
         .then((data) => {
           setAvailabilityData(data);
           initializeUnitSelection(data, prop);
-          // Reset form
           setSelectedDates([]);
           setSelectedRange({ start: null, end: null });
           setNote('');
-          setMessage(null);
+          // ✅ HAPUS: setMessage(null);
         })
         .catch((err) => {
           console.error('Failed to fetch availability:', err);
@@ -114,7 +115,6 @@ export default function ManageAvailabilitySection() {
     }
 
     if (selectedProperty?.type === 'hotel' && selectedRoomId) {
-      // Hotel: cari roomType -> room
       const roomType = availabilityData.roomTypes?.find(
         (rt: any) => rt.roomTypeId === selectedRoomTypeId
       );
@@ -126,7 +126,6 @@ export default function ManageAvailabilitySection() {
     }
 
     if (selectedUnitId) {
-      // Kos / Apartemen / Rumah
       const unit = availabilityData.units?.find((u: any) => u.unitId === selectedUnitId);
       return getBookedDates(unit?.bookings || []);
     }
@@ -175,12 +174,11 @@ export default function ManageAvailabilitySection() {
 
     const modeType = getAvailabilityMode(selectedProperty.type);
     setIsSubmitting(true);
-    setMessage(null);
 
     try {
       if (mode === 'range') {
         if (!selectedRange.start || !selectedRange.end) {
-          setMessage({ type: 'error', text: 'Pilih tanggal awal dan akhir terlebih dahulu.' });
+          toast.error('Pilih tanggal awal dan akhir terlebih dahulu.');
           setIsSubmitting(false);
           return;
         }
@@ -192,14 +190,14 @@ export default function ManageAvailabilitySection() {
           await addBooking(selectedProperty.id, startDate, endDate, note);
         } else if (selectedProperty.type === 'hotel') {
           if (!selectedRoomId) {
-            setMessage({ type: 'error', text: 'Pilih kamar terlebih dahulu.' });
+            toast.error('Pilih kamar terlebih dahulu.');
             setIsSubmitting(false);
             return;
           }
           await addBookingRoom(selectedProperty.id, selectedRoomId, startDate, endDate, note);
         } else {
           if (!selectedUnitId) {
-            setMessage({ type: 'error', text: 'Pilih unit/kamar terlebih dahulu.' });
+            toast.error('Pilih unit/kamar terlebih dahulu.');
             setIsSubmitting(false);
             return;
           }
@@ -208,7 +206,7 @@ export default function ManageAvailabilitySection() {
       } else {
         // Manual mode
         if (selectedDates.length === 0) {
-          setMessage({ type: 'error', text: 'Pilih minimal 1 tanggal.' });
+          toast.error('Pilih minimal 1 tanggal.');
           setIsSubmitting(false);
           return;
         }
@@ -224,20 +222,16 @@ export default function ManageAvailabilitySection() {
         }
       }
 
-      setMessage({ type: 'success', text: 'Booking berhasil ditambahkan!' });
       toast.success('Booking berhasil ditambahkan!');
 
-      // Refresh data
       const refreshed = await fetchAvailability(selectedProperty.id);
       setAvailabilityData(refreshed);
       initializeUnitSelection(refreshed, selectedProperty);
 
-      // Reset form
       setSelectedDates([]);
       setSelectedRange({ start: null, end: null });
       setNote('');
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Gagal menambahkan booking.' });
       toast.error(err.message || 'Gagal menambahkan booking.');
     } finally {
       setIsSubmitting(false);
@@ -261,14 +255,12 @@ export default function ManageAvailabilitySection() {
 
       await deleteBooking(selectedProperty.id, bookingId, targetId);
 
-      // Refresh data
       const refreshed = await fetchAvailability(selectedProperty.id);
       setAvailabilityData(refreshed);
       initializeUnitSelection(refreshed, selectedProperty);
-      setMessage({ type: 'success', text: 'Booking berhasil dihapus!' });
+      
       toast.success('Booking berhasil dihapus!');
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Gagal menghapus booking.' });
       toast.error(err.message || 'Gagal menghapus booking.');
     }
   };
@@ -282,7 +274,6 @@ export default function ManageAvailabilitySection() {
   const roomTypes = availabilityData?.roomTypes || [];
   const units = availabilityData?.units || [];
 
-  // Get available room options for hotel
   const getRoomOptions = () => {
     const roomType = roomTypes.find((rt: any) => rt.roomTypeId === selectedRoomTypeId);
     return roomType?.rooms || [];
@@ -323,7 +314,6 @@ export default function ManageAvailabilitySection() {
                   onChange={(e) => {
                     const newRoomTypeId = e.target.value;
                     setSelectedRoomTypeId(newRoomTypeId);
-                    // Auto-select first room of this room type
                     const roomType = roomTypes.find((rt: any) => rt.roomTypeId === newRoomTypeId);
                     if (roomType?.rooms?.length > 0) {
                       setSelectedRoomId(roomType.rooms[0].roomId);
@@ -386,18 +376,7 @@ export default function ManageAvailabilitySection() {
         )}
       </div>
 
-      {/* Message */}
-      {message && (
-        <div
-          className={`p-4 rounded-lg ${
-            message.type === 'success'
-              ? 'bg-green-50 text-green-700 border border-green-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+      {/* ✅ HAPUS: Message div - pakai toast saja */}
 
       {/* Calendar & Input */}
       <div className="bg-white rounded-lg shadow p-6">
