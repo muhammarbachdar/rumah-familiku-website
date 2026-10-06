@@ -375,8 +375,6 @@ export async function POST(request: NextRequest) {
         basePropertyData.monthlyPricingWNA = null;
       }
 
-      const rulesJson = JSON.stringify(basePropertyData.rules);
-      const rulesEnJson = JSON.stringify(basePropertyData.rulesEn);
       const imagesCategorizedJson = JSON.stringify(basePropertyData.imagesCategorized);
       const facilitiesJson = JSON.stringify(basePropertyData.facilities);
 
@@ -431,8 +429,8 @@ export async function POST(request: NextRequest) {
           basePropertyData.images,
           imagesCategorizedJson,
           facilitiesJson,
-          rulesJson,
-          rulesEnJson,
+          basePropertyData.rules,
+          basePropertyData.rulesEn,
           basePropertyData.notes,
           basePropertyData.notesEn,
           basePropertyData.isGroupFriendly,

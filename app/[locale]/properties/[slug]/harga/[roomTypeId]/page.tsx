@@ -44,9 +44,10 @@ export default function RoomTypeDetailPage() {
   const bookedDates = roomType ? getBookedDatesForRoomType() : [];
 
   useEffect(() => {
-    Promise.all([fetchProperties(), fetchSite()])
-      .then(([propertiesData, siteResult]) => {
-        const found = propertiesData.find((p: any) => p.slug === slug);
+    Promise.all([fetchProperties(1, 1000), fetchSite()])
+      .then(([propertiesResult, siteResult]) => {
+        const properties = propertiesResult?.data || [];
+        const found = properties.find((p: any) => p.slug === slug);
         if (!found) {
           setLoading(false);
           return;

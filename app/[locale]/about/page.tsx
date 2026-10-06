@@ -112,7 +112,7 @@ export default async function AboutPage() {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-gold text-charcoal px-8 py-4 rounded-lg font-bold hover:bg-yellow-500 transition"
+              className="inline-block bg-gold text-[color:var(--gold-text)] px-8 py-4 rounded-lg font-bold hover:bg-yellow-500 transition"
             >
               {locale === 'id' ? 'Hubungi Kami via WhatsApp' : 'Contact Us on WhatsApp'}
             </a>

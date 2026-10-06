@@ -42,3 +42,9 @@ stderr.log
 # Logs
 npm-debug.log*
 pnpm-debug.log*
+
+# User-uploaded content (bukan source code, beda-beda tiap environment)
+public/uploads/
+
+# Dump project untuk audit AI eksternal
+project-dump.txt

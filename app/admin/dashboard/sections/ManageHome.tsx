@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 // Modal component (dipindahkan ke luar agar tidak remount tiap render)
 function Modal({ title, onSave, onClose, children }: any) {
@@ -182,7 +183,53 @@ export default function ManageHomeSection() {
           <div><label className="block text-sm font-medium">CTA Primary (EN)</label><input type="text" value={home.hero.ctaPrimaryEn} onChange={e => setHome({...home, hero: {...home.hero, ctaPrimaryEn: e.target.value}})} className="w-full border rounded-lg px-3 py-2" /></div>
           <div><label className="block text-sm font-medium">CTA Secondary (ID)</label><input type="text" value={home.hero.ctaSecondaryId} onChange={e => setHome({...home, hero: {...home.hero, ctaSecondaryId: e.target.value}})} className="w-full border rounded-lg px-3 py-2" /></div>
           <div><label className="block text-sm font-medium">CTA Secondary (EN)</label><input type="text" value={home.hero.ctaSecondaryEn} onChange={e => setHome({...home, hero: {...home.hero, ctaSecondaryEn: e.target.value}})} className="w-full border rounded-lg px-3 py-2" /></div>
-          <div className="col-span-2"><label className="block text-sm font-medium">Hero Image URL</label><input type="text" value={home.hero.image} onChange={e => setHome({...home, hero: {...home.hero, image: e.target.value}})} className="w-full border rounded-lg px-3 py-2" /></div>
+          <div className="col-span-2">
+            <label className="block text-sm font-medium">Hero Image</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  try {
+                    const res = await fetch('/api/admin/upload', {
+                      method: 'POST',
+                      body: formData,
+                    });
+                    if (!res.ok) {
+                      const err = await res.json();
+                      toast.error(err.error || 'Upload gagal');
+                      return;
+                    }
+                    const data = await res.json();
+                    setHome({ ...home, hero: { ...home.hero, image: data.url } });
+                  } catch (err) {
+                    toast.error('Terjadi kesalahan saat upload.');
+                    console.error(err);
+                  }
+                  e.target.value = '';
+                }}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+              />
+              <span className="text-xs text-gray-500">(max 5MB, JPG/PNG/WebP)</span>
+            </div>
+            {home.hero.image && (
+              <div className="relative mt-2 inline-block">
+                <img src={home.hero.image} className="h-20 w-32 object-cover rounded border" alt="Preview" />
+                <button
+                  type="button"
+                  onClick={() => setHome({ ...home, hero: { ...home.hero, image: '' } })}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                  aria-label="Hapus hero image"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <button onClick={handleHeroSave} className="mt-4 bg-brand-green text-white px-4 py-2 rounded-lg">{saved ? '✓ Tersimpan!' : 'Simpan Hero'}</button>
       </div>
@@ -229,7 +276,42 @@ export default function ManageHomeSection() {
       {/* Modals */}
       {editingPropertyType && (
         <Modal title="Edit Property Type" onSave={handleSavePropertyType} onClose={() => setEditingPropertyType(null)}>
-          <div className="space-y-3"><input placeholder="Icon URL/Emoji" value={form.icon} onChange={e => setForm({...form, icon: e.target.value})} className="w-full border rounded px-3 py-2" /><input placeholder="Label ID" value={form.labelId} onChange={e => setForm({...form, labelId: e.target.value})} className="w-full border rounded px-3 py-2" /><input placeholder="Label EN" value={form.labelEn} onChange={e => setForm({...form, labelEn: e.target.value})} className="w-full border rounded px-3 py-2" /></div>
+          <div className="space-y-3">
+            <input placeholder="Icon URL/Emoji" value={form.icon} onChange={e => setForm({...form, icon: e.target.value})} className="w-full border rounded px-3 py-2" />
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  try {
+                    const res = await fetch('/api/admin/upload', {
+                      method: 'POST',
+                      body: formData,
+                    });
+                    if (!res.ok) {
+                      const err = await res.json();
+                      toast.error(err.error || 'Upload gagal');
+                      return;
+                    }
+                    const data = await res.json();
+                    setForm({ ...form, icon: data.url });
+                  } catch (err) {
+                    toast.error('Terjadi kesalahan saat upload.');
+                    console.error(err);
+                  }
+                  e.target.value = '';
+                }}
+                className="block w-full text-xs text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
+              />
+              <span className="text-xs text-gray-500 whitespace-nowrap">atau upload</span>
+            </div>
+            <input placeholder="Label ID" value={form.labelId} onChange={e => setForm({...form, labelId: e.target.value})} className="w-full border rounded px-3 py-2" />
+            <input placeholder="Label EN" value={form.labelEn} onChange={e => setForm({...form, labelEn: e.target.value})} className="w-full border rounded px-3 py-2" />
+          </div>
         </Modal>
       )}
       {showAddPropertyType && (

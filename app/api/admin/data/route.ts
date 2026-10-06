@@ -518,6 +518,15 @@ export async function POST(request: NextRequest) {
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
+
+          // Hapus FAQ yang tidak ada lagi di array yang dikirim dari frontend
+          const incomingIds = faqs.map((f) => f.id).filter(Boolean);
+          if (incomingIds.length > 0) {
+            await client.query('DELETE FROM "FAQ" WHERE id <> ALL($1)', [incomingIds]);
+          } else {
+            await client.query('DELETE FROM "FAQ"');
+          }
+
           for (const faq of faqs) {
             const faqId = faq.id || createId();
             if (faq.id) {

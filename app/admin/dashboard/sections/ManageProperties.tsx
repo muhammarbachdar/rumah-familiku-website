@@ -1113,12 +1113,13 @@ function ModalForm({
             {/* Rules */}
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Rules (ID) - satu per baris</label>
-              <textarea
+                <textarea
                 rows={3}
                 value={form.rules.join('\n')}
-                onChange={e => setForm({...form, rules: e.target.value.split('\n').map((s: string) => s.trim()).filter(Boolean)})}
+                onChange={e => setForm({...form, rules: e.target.value.split('\n')})}
+                onBlur={() => setForm((f: typeof form) => ({...f, rules: f.rules.map((s: string) => s.trim()).filter(Boolean)}))}
                 className="w-full border rounded-lg px-3 py-2"
-                placeholder="Dilarang merokok&#10;Check-in 14:00"
+                placeholder="Dilarang merokok&#10;Check-in14:00"
               />
             </div>
             <div className="col-span-2">
@@ -1126,7 +1127,8 @@ function ModalForm({
               <textarea
                 rows={3}
                 value={form.rulesEn.join('\n')}
-                onChange={e => setForm({...form, rulesEn: e.target.value.split('\n').map((s: string) => s.trim()).filter(Boolean)})}
+                onChange={e => setForm({...form, rulesEn: e.target.value.split('\n')})}
+                onBlur={() => setForm((f: typeof form) => ({...f, rulesEn: f.rulesEn.map((s: string) => s.trim()).filter(Boolean)}))}
                 className="w-full border rounded-lg px-3 py-2"
                 placeholder="No smoking&#10;Check-in 14:00"
               />

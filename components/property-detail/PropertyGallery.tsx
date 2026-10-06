@@ -27,8 +27,18 @@ export function PropertyGallery({ images, displayName, locale }: PropertyGallery
   return (
     <>
       {/* ===== GALERI UTAMA ===== */}
-      <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden mb-6">
-        <img src={activePhoto.url} alt={displayName} className="w-full h-full object-cover" />
+      <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden mb-6 bg-gray-900">
+        <img
+          src={activePhoto.url}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60"
+        />
+        <img
+          src={activePhoto.url}
+          alt={displayName}
+          className="relative w-full h-full object-contain"
+        />
         {allPhotos.length > 1 && (
           <>
             <button
