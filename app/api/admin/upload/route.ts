@@ -24,7 +24,7 @@ function getUploadDir(): string {
     return process.env.UPLOAD_DIR;
   }
 
-  const cwd = process.cwd();
+  const cwd = /* turbopackIgnore: true */ process.cwd();
   const possiblePaths = [
     path.join(cwd, '../../public', 'uploads', 'properties'),
     path.join(cwd, 'public', 'uploads', 'properties'),

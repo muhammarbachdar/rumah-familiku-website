@@ -7,12 +7,13 @@ declare global {
 }
 
 /**
- * Konfigurasi SSL berdasarkan environment
- * - Development: SSL dimatikan
- * - Production: SSL diaktifkan dengan rejectUnauthorized: false
- *   (cocok untuk IDCloudHost yang pakai self-signed certificate)
+ * Konfigurasi SSL — dikontrol eksplisit lewat env var DATABASE_SSL,
+ * BUKAN dari NODE_ENV (karena NODE_ENV selalu 'production' saat `npm run build`,
+ * termasuk saat build lokal, yang akan salah nyalain SSL ke DB lokal yang tidak support SSL).
+ * Set DATABASE_SSL=true di .env production HANYA jika sudah dikonfirmasi
+ * database production butuh/support SSL.
  */
-const sslConfig = process.env.NODE_ENV === 'production' 
+const sslConfig = process.env.DATABASE_SSL === 'true'
   ? { rejectUnauthorized: false }
   : false;
 
